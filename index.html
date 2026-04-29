@@ -3,15 +3,64 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
     <title>VoteMate AI – Your Personal Election Companion</title>
     <meta name="description" content="VoteMate AI guides first-time and experienced voters through every step of India's election process with AI-powered assistance, step-by-step guidance, and real-time information." />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="application-name" content="VoteMate AI" />
+    <meta name="keywords" content="India election, voter registration, polling booth, ECI, vote, VoteMate, election guide" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="VoteMate AI – Your Personal Election Companion" />
+    <meta property="og:description" content="AI-powered election guidance for every Indian voter. Register, find your booth, and vote with confidence." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vote-mate-ai.vercel.app" />
+
+    <!-- Google Fonts (Google Service) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- Google Analytics 4 (Google Service) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VOTEMATE2024"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VOTEMATE2024', {
+        page_title: 'VoteMate AI',
+        page_location: window.location.href,
+        send_page_view: true
+      });
+    </script>
+
+    <!-- Accessibility: skip to main content -->
+    <style>
+      .skip-link {
+        position: absolute;
+        top: -100%;
+        left: 0;
+        background: #1e3a8a;
+        color: white;
+        padding: 8px 16px;
+        font-family: Inter, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 9999;
+        border-radius: 0 0 8px 0;
+        text-decoration: none;
+        transition: top 0.2s;
+      }
+      .skip-link:focus {
+        top: 0;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Skip to main content (Accessibility) -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div id="root" role="application" aria-label="VoteMate AI Application"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
