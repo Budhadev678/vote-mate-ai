@@ -400,12 +400,15 @@ export function ProfileScreen() {
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="state-dialog-title"
               className="w-full max-w-[480px] bg-white rounded-t-3xl shadow-2xl overflow-hidden"
               style={{ maxHeight: '75vh' }}
             >
               {/* Sheet header */}
               <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-                <p className="font-poppins font-bold text-slate-900">Select State / UT</p>
+                <p id="state-dialog-title" className="font-poppins font-bold text-slate-900">Select State / UT</p>
                 <button onClick={() => setShowStateSheet(false)} className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -460,12 +463,15 @@ export function ProfileScreen() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.93 }}
               onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="reset-dialog-title"
               className="w-full max-w-[320px] bg-white rounded-3xl shadow-2xl p-6"
             >
               <div className="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center text-3xl mx-auto mb-4">
                 ⚠️
               </div>
-              <h3 className="font-poppins font-bold text-slate-900 text-center text-lg mb-2">Reset All Progress?</h3>
+              <h3 id="reset-dialog-title" className="font-poppins font-bold text-slate-900 text-center text-lg mb-2">Reset All Progress?</h3>
               <p className="text-sm font-inter text-slate-500 text-center leading-relaxed mb-6">
                 This will erase all your data, preferences and readiness progress. This action cannot be undone.
               </p>
