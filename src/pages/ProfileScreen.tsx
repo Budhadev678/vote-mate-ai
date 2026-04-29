@@ -1,280 +1,483 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ArrowLeft, User, MapPin, Globe, Settings, ChevronRight,
-  BookOpen, Users, BarChart2, HelpCircle, LogOut, Shield, Scale, AlertOctagon, Accessibility,
+  ArrowLeft, MapPin, Globe, Settings2, ChevronRight,
+  BookOpen, Users, BarChart2, HelpCircle, RotateCcw,
+  Shield, Scale, AlertOctagon, Accessibility, Check,
+  ExternalLink, Phone, Edit2, X, ChevronDown,
 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { ReadinessRing } from '../components/ReadinessRing'
+import { InfoButtonLight } from '../components/InfoButton'
 import type { Language, InteractionMode } from '../types'
+
+const STATES = [
+  'Andhra Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat',
+  'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+  'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
+  'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh',
+  'Uttarakhand','West Bengal',
+]
+
+const MENU_GROUPS = [
+  {
+    title: 'Learn',
+    items: [
+      { icon: '📅', label: 'Election Timeline', screen: 'timeline' as const, desc: 'Key dates & milestones' },
+      { icon: '📖', label: 'Glossary', screen: 'glossary' as const, desc: 'Election terms explained' },
+    ],
+  },
+  {
+    title: 'Tools',
+    items: [
+      { icon: '👨‍👩‍👧', label: 'Family Voting', screen: 'family' as const, desc: 'Help family members vote' },
+      { icon: '📊', label: 'Community Stats', screen: 'community' as const, desc: 'Regional readiness data' },
+      { icon: '⚡', label: '1-Min Quick Guide', screen: 'quick' as const, desc: 'Fast prep for busy voters' },
+    ],
+  },
+  {
+    title: 'Trust & Safety',
+    items: [
+      { icon: '🛡️', label: 'Verify News', screen: 'verify-news' as const, desc: 'Check election news' },
+      { icon: '⚖️', label: 'Know Candidates', screen: 'candidates' as const, desc: 'Candidate info' },
+      { icon: '🚨', label: 'Report Violation', screen: 'report-violation' as const, desc: 'Report misconduct' },
+      { icon: '♿', label: 'Accessibility', screen: 'accessibility' as const, desc: 'Voting support options' },
+    ],
+  },
+]
 
 export function ProfileScreen() {
   const { user, updateUser, resetUser, goBack, navigate } = useStore()
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput] = useState(user.name || '')
-  const [editingState, setEditingState] = useState(false)
+  const [showStateSheet, setShowStateSheet] = useState(false)
+  const [stateSearch, setStateSearch] = useState('')
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
 
-  const STATES = [
-    'Andhra Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat',
-    'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
-    'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
-    'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh',
-    'Uttarakhand','West Bengal',
-  ]
+  const filteredStates = STATES.filter((s) =>
+    s.toLowerCase().includes(stateSearch.toLowerCase()),
+  )
 
   const handleSaveName = () => {
-    updateUser({ name: nameInput })
+    if (nameInput.trim()) updateUser({ name: nameInput.trim() })
     setEditingName(false)
   }
 
   const handleReset = () => {
-    if (window.confirm('Reset all your progress and start fresh? This cannot be undone.')) {
-      resetUser()
-      navigate('landing')
-    }
+    resetUser()
+    navigate('landing')
+    setShowResetConfirm(false)
   }
 
-  const menuItems = [
-    { icon: BookOpen, label: 'Election Timeline', screen: 'timeline' as const, color: 'text-purple-600' },
-    { icon: BookOpen, label: 'Election Glossary', screen: 'glossary' as const, color: 'text-teal-600' },
-    { icon: Users, label: 'Family Voting', screen: 'family' as const, color: 'text-purple-600' },
-    { icon: BarChart2, label: 'Community Insights', screen: 'community' as const, color: 'text-indigo-600' },
-    { icon: Shield, label: 'Trust Shield', screen: 'verify-news' as const, color: 'text-red-600' },
-    { icon: Scale, label: 'Know Candidates', screen: 'candidates' as const, color: 'text-blue-600' },
-    { icon: AlertOctagon, label: 'Report Violation', screen: 'report-violation' as const, color: 'text-red-700' },
-    { icon: Accessibility, label: 'Accessibility', screen: 'accessibility' as const, color: 'text-sky-600' },
-    { icon: HelpCircle, label: '1-Min Quick Guide', screen: 'quick' as const, color: 'text-amber-600' },
-  ]
+  const initials = user.name
+    ? user.name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2)
+    : '?'
+
+  const readinessColor =
+    user.readinessScore >= 75 ? '#22c55e' :
+    user.readinessScore >= 40 ? '#f59e0b' : '#ef4444'
 
   return (
-    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
-      {/* Header */}
-      <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg relative mb-6">
-        <button
-          onClick={goBack}
-          className="text-white/80 hover:text-white mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back
-        </button>
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-6">
 
+      {/* ── Hero Header ── */}
+      <div
+        className="relative px-5 pt-10 pb-8 rounded-b-3xl shadow-lg mb-5 overflow-hidden"
+        style={{ background: 'linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#2563eb 100%)' }}
+      >
+        {/* Decorative blob */}
+        <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10 pointer-events-none"
+          style={{ background: 'radial-gradient(circle,white,transparent 70%)', transform: 'translate(30%,-30%)' }} />
+
+        {/* Back + Info row */}
+        <div className="flex items-center justify-between mb-6">
+          <button
+            onClick={goBack}
+            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-inter font-medium">Back</span>
+          </button>
+          <InfoButtonLight
+            text="Your profile stores your preferences locally on your device. No personal data is sent to external servers. You can reset all data at any time."
+            title="Profile & Privacy"
+          />
+        </div>
+
+        {/* Avatar + name + ring */}
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-3xl shadow-sm">
-            {user.voterType === 'first-time' ? '🌟' : '🗳️'}
+          {/* Avatar circle */}
+          <div className="relative flex-shrink-0">
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center text-white font-poppins font-bold text-xl shadow-lg border-2 border-white/20"
+              style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
+            >
+              {user.name ? initials : (user.voterType === 'first-time' ? '🌟' : '🗳️')}
+            </div>
+            {/* Edit badge */}
+            <button
+              onClick={() => { setNameInput(user.name || ''); setEditingName(true) }}
+              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-md"
+            >
+              <Edit2 className="w-2.5 h-2.5 text-slate-700" />
+            </button>
           </div>
-          <div className="flex-1">
+
+          {/* Name + info */}
+          <div className="flex-1 min-w-0">
             {editingName ? (
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
                 <input
                   type="text"
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg text-slate-800 text-sm font-inter border border-slate-300 focus:outline-none focus:border-slate-500 bg-white"
+                  onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
+                  placeholder="Your name"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-xl text-slate-800 text-sm font-inter border border-slate-200 focus:outline-none focus:border-indigo-400 bg-white shadow-sm"
                   autoFocus
                 />
                 <button
                   onClick={handleSaveName}
-                  className="text-xs bg-slate-900 text-white px-3 py-1.5 rounded-lg font-inter font-medium"
+                  className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm flex-shrink-0"
                 >
-                  Save
+                  <Check className="w-4 h-4 text-indigo-600" />
+                </button>
+                <button
+                  onClick={() => setEditingName(false)}
+                  className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <X className="w-4 h-4 text-white/70" />
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => setEditingName(true)}
-                className="text-left group"
-              >
-                <p className="text-white font-poppins font-semibold text-xl leading-tight group-hover:text-white/80 transition-colors">
-                  {user.name || 'Set your name'}
+              <>
+                <button
+                  onClick={() => { setNameInput(user.name || ''); setEditingName(true) }}
+                  className="text-left group"
+                >
+                  <p className="text-white font-poppins font-bold text-lg leading-tight truncate group-hover:text-white/80 transition-colors">
+                    {user.name || 'Add your name'}
+                  </p>
+                </button>
+                <p className="text-white/60 text-xs font-inter mt-0.5 capitalize">
+                  {user.voterType?.replace('-', ' ') || 'Voter'} · {user.state || 'India'}
                 </p>
-                <p className="text-white/60 text-xs font-inter mt-1 font-medium">Tap to edit name</p>
-              </button>
+              </>
             )}
-            <p className="text-white/80 text-xs font-inter mt-2 capitalize font-medium">
-              {user.voterType?.replace('-', ' ') || 'Voter'} · {user.state || 'India'}
+          </div>
+
+          {/* Readiness ring */}
+          <div className="flex-shrink-0">
+            <ReadinessRing score={user.readinessScore} size={60} label="Readiness" />
+          </div>
+        </div>
+
+        {/* Readiness status strip */}
+        <div className="mt-5 flex items-center gap-3 bg-white/10 rounded-2xl px-4 py-3 border border-white/10">
+          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: readinessColor }} />
+          <div className="flex-1">
+            <p className="text-white text-xs font-inter font-semibold">
+              {user.readinessScore >= 75 ? 'Ready to Vote ✅' :
+               user.readinessScore >= 40 ? 'In Progress — keep going!' :
+               'Just getting started'}
             </p>
+            <div className="h-1.5 bg-white/10 rounded-full mt-1.5 overflow-hidden">
+              <motion.div
+                className="h-full rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${user.readinessScore}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                style={{ backgroundColor: readinessColor }}
+              />
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-            {/* Sync check: v2 */}
-            <ReadinessRing score={user.readinessScore} size={56} label="Readiness" />
-          </div>
+          <span className="text-white font-poppins font-bold text-sm flex-shrink-0">
+            {user.readinessScore}%
+          </span>
         </div>
       </div>
 
-      <div className="px-4 mt-6 space-y-4">
-        {/* Settings card */}
+      <div className="px-4 space-y-4">
+
+        {/* ── Preferences Card ── */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"
+          className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
         >
-          <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-4">
-            Preferences
-          </p>
+          <div className="px-5 pt-4 pb-2">
+            <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest">Preferences</p>
+          </div>
 
           {/* Language */}
-          <div className="flex items-center gap-3 py-3 border-b border-slate-50">
-            <Globe className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-inter text-slate-700 flex-1 font-medium">Language</span>
-            <div className="flex gap-2">
-              {(['en', 'hi', 'or'] as Language[]).map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => updateUser({ language: lang })}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-inter font-semibold border transition-all ${
-                    user.language === lang
-                      ? 'btn-gradient shadow-sm'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {lang === 'en' ? 'English' : lang === 'hi' ? 'हिंदी' : 'ଓଡ଼ିଆ'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Preferred Mode */}
-          <div className="flex items-center gap-3 py-3 border-b border-slate-50">
-            <Settings className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-inter text-slate-700 flex-1 font-medium">App Mode</span>
-            <div className="flex gap-2">
-              {(['chat', 'guided', 'quick'] as InteractionMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => updateUser({ preferredMode: mode })}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-inter font-semibold border capitalize transition-all ${
-                    user.preferredMode === mode
-                      ? 'btn-gradient shadow-sm'
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  {mode}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* State */}
-          <div className="flex flex-col gap-2 py-3">
-            <div className="flex items-center gap-3">
-              <MapPin className="w-4 h-4 text-slate-400" />
-              <span className="text-sm font-inter text-slate-700 flex-1 font-medium">Your Region</span>
-              {!editingState && (
-                <>
-                  <span className="text-sm font-inter text-slate-600 font-medium">{user.state || 'Not set'}</span>
-                  <button
-                    onClick={() => setEditingState(true)}
-                    className="text-xs text-slate-900 font-inter font-bold ml-3 bg-slate-100 px-2 py-1 rounded-md hover:bg-slate-200 transition-colors"
-                  >
-                    Edit
-                  </button>
-                </>
-              )}
-            </div>
-            
-            {editingState && (
-              <div className="mt-2 pl-7 flex flex-col gap-2">
-                <select 
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-inter text-slate-700 focus:outline-none focus:border-slate-400"
-                  value={user.state || ''}
-                  onChange={(e) => {
-                    updateUser({ state: e.target.value })
-                    setEditingState(false)
-                  }}
-                >
-                  <option value="" disabled>Select your state</option>
-                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <button 
-                  onClick={() => setEditingState(false)}
-                  className="text-xs text-slate-500 self-end hover:text-slate-700"
-                >
-                  Cancel
-                </button>
+          <div className="px-5 py-3.5 border-b border-slate-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center">
+                  <Globe className="w-4 h-4 text-indigo-600" />
+                </div>
+                <span className="text-sm font-inter text-slate-700 font-semibold">Language</span>
               </div>
-            )}
+              <div className="flex gap-1.5">
+                {(['en', 'hi', 'or'] as Language[]).map((lang) => (
+                  <button
+                    key={lang}
+                    onClick={() => updateUser({ language: lang })}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-inter font-bold border transition-all ${
+                      user.language === lang
+                        ? 'text-white border-transparent'
+                        : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300'
+                    }`}
+                    style={user.language === lang ? { background: 'linear-gradient(135deg,#4f46e5,#db2777)' } : {}}
+                  >
+                    {lang === 'en' ? 'EN' : lang === 'hi' ? 'हि' : 'ଓ'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* App Mode */}
+          <div className="px-5 py-3.5 border-b border-slate-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
+                  <Settings2 className="w-4 h-4 text-purple-600" />
+                </div>
+                <span className="text-sm font-inter text-slate-700 font-semibold">App Mode</span>
+              </div>
+              <div className="flex gap-1.5">
+                {(['chat', 'guided', 'quick'] as InteractionMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => updateUser({ preferredMode: mode })}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-inter font-bold border capitalize transition-all ${
+                      user.preferredMode === mode
+                        ? 'text-white border-transparent'
+                        : 'bg-slate-50 text-slate-500 border-slate-200 hover:border-slate-300'
+                    }`}
+                    style={user.preferredMode === mode ? { background: 'linear-gradient(135deg,#4f46e5,#db2777)' } : {}}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* State / Region */}
+          <div className="px-5 py-3.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-inter text-slate-700 font-semibold">State / UT</p>
+                  <p className="text-xs font-inter text-slate-400">{user.state || 'Not set'}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => { setStateSearch(''); setShowStateSheet(true) }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs font-inter font-bold hover:bg-slate-100 transition-colors"
+              >
+                <Edit2 className="w-3 h-3" />
+                {user.state ? 'Change' : 'Set'}
+              </button>
+            </div>
           </div>
         </motion.div>
 
-        {/* Menu items */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
-        >
-          <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest px-5 pt-5 mb-3">
-            Resources
-          </p>
-          {menuItems.map((item, i) => {
-            const Icon = item.icon
-            return (
+        {/* ── Menu Groups ── */}
+        {MENU_GROUPS.map((group, gi) => (
+          <motion.div
+            key={group.title}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 * (gi + 1) }}
+            className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
+          >
+            <div className="px-5 pt-4 pb-2">
+              <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest">{group.title}</p>
+            </div>
+            {group.items.map((item, i) => (
               <button
                 key={item.screen}
                 onClick={() => navigate(item.screen)}
-                className={`w-full flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors ${
-                  i < menuItems.length - 1 ? 'border-b border-slate-50' : ''
+                className={`w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left ${
+                  i < group.items.length - 1 ? 'border-b border-slate-50' : ''
                 }`}
               >
-                <div className={`p-2 rounded-lg bg-slate-50 ${item.color.replace('text', 'bg').replace('600', '100').replace('700', '100')}`}>
-                  <Icon className={`w-4 h-4 ${item.color.replace('-600', '-700')}`} />
+                <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-lg flex-shrink-0">
+                  {item.icon}
                 </div>
-                <span className="text-sm font-inter text-slate-700 flex-1 text-left font-medium">
-                  {item.label}
-                </span>
-                <ChevronRight className="w-4 h-4 text-slate-300" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-inter font-semibold text-slate-800 truncate">{item.label}</p>
+                  <p className="text-[11px] font-inter text-slate-400 mt-0.5">{item.desc}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-300 flex-shrink-0" />
               </button>
-            )
-          })}
-        </motion.div>
+            ))}
+          </motion.div>
+        ))}
 
-        {/* Important links */}
+        {/* ── Official Resources ── */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-blue-50 rounded-2xl p-4 border border-blue-100"
+          className="rounded-2xl overflow-hidden shadow-sm"
+          style={{ background: 'linear-gradient(135deg,#eff6ff,#dbeafe)' }}
         >
-          <p className="text-xs font-poppins font-semibold text-blue-700 mb-3">
-            🏛️ Official Resources
-          </p>
+          <div className="px-5 pt-4 pb-2">
+            <p className="text-[10px] font-inter font-bold text-blue-500 uppercase tracking-widest">🏛️ Official Resources</p>
+          </div>
           {[
-            { label: 'voters.eci.gov.in', desc: 'Register & check electoral roll', url: 'https://voters.eci.gov.in' },
-            { label: 'eci.gov.in', desc: 'Election Commission of India', url: 'https://eci.gov.in' },
-            { label: 'Helpline: 1950', desc: 'National Voter Helpline', url: 'tel:1950' },
-          ].map((link) => (
+            { label: 'voters.eci.gov.in', desc: 'Register & check electoral roll', url: 'https://voters.eci.gov.in', icon: '🗳️' },
+            { label: 'eci.gov.in', desc: 'Election Commission of India', url: 'https://eci.gov.in', icon: '🏛️' },
+            { label: 'Helpline: 1950', desc: 'National Voter Helpline', url: 'tel:1950', icon: '📞' },
+          ].map((link, i, arr) => (
             <a
               key={link.url}
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 py-2 border-b border-blue-100 last:border-0"
+              className={`flex items-center gap-3 px-5 py-3.5 hover:bg-blue-100/50 transition-colors ${i < arr.length - 1 ? 'border-b border-blue-100' : ''}`}
             >
+              <span className="text-lg">{link.icon}</span>
               <div className="flex-1">
-                <p className="text-xs font-poppins font-semibold text-blue-700">{link.label}</p>
-                <p className="text-xs font-inter text-blue-500">{link.desc}</p>
+                <p className="text-xs font-poppins font-bold text-blue-800">{link.label}</p>
+                <p className="text-[11px] font-inter text-blue-500">{link.desc}</p>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-blue-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
             </a>
           ))}
         </motion.div>
 
-        {/* Reset */}
-        <motion.button
+        {/* ── Reset + Version ── */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          onClick={handleReset}
-          className="w-full py-4 rounded-xl flex items-center justify-center gap-2 text-rose-600 border border-rose-100 bg-rose-50/50 hover:bg-rose-50 transition-colors font-inter text-sm font-semibold"
+          transition={{ delay: 0.25 }}
+          className="space-y-3"
         >
-          <LogOut className="w-4 h-4" />
-          Reset All Progress
-        </motion.button>
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="w-full py-3.5 rounded-2xl flex items-center justify-center gap-2 text-rose-600 border border-rose-100 bg-rose-50 hover:bg-rose-100 transition-colors font-inter text-sm font-bold"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Reset All Progress
+          </button>
 
-        {/* Version */}
-        <p className="text-center text-xs font-inter text-gray-400 pb-2">
-          VoteMate AI v1.0 · Made with ❤️ for Indian voters
-        </p>
+          <p className="text-center text-[11px] font-inter text-slate-400 pb-2">
+            VoteMate AI v2.0 · Made with ❤️ for Indian voters
+          </p>
+        </motion.div>
       </div>
+
+      {/* ── State Picker Bottom Sheet ── */}
+      <AnimatePresence>
+        {showStateSheet && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowStateSheet(false)}
+            className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-end justify-center"
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[480px] bg-white rounded-t-3xl shadow-2xl overflow-hidden"
+              style={{ maxHeight: '75vh' }}
+            >
+              {/* Sheet header */}
+              <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <p className="font-poppins font-bold text-slate-900">Select State / UT</p>
+                <button onClick={() => setShowStateSheet(false)} className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {/* Search */}
+              <div className="px-4 py-3 border-b border-slate-50">
+                <input
+                  type="text"
+                  value={stateSearch}
+                  onChange={(e) => setStateSearch(e.target.value)}
+                  placeholder="Search state..."
+                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm font-inter text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-50"
+                  autoFocus
+                />
+              </div>
+              {/* List */}
+              <div className="overflow-y-auto" style={{ maxHeight: '50vh' }}>
+                {filteredStates.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => {
+                      updateUser({ state: s })
+                      setShowStateSheet(false)
+                    }}
+                    className={`w-full flex items-center justify-between px-5 py-3.5 border-b border-slate-50 hover:bg-slate-50 transition-colors text-left last:border-0 ${user.state === s ? 'bg-indigo-50' : ''}`}
+                  >
+                    <span className={`text-sm font-inter font-medium ${user.state === s ? 'text-indigo-700' : 'text-slate-700'}`}>{s}</span>
+                    {user.state === s && <Check className="w-4 h-4 text-indigo-600 flex-shrink-0" />}
+                  </button>
+                ))}
+                {filteredStates.length === 0 && (
+                  <p className="text-center text-sm text-slate-400 font-inter py-8">No state found</p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Reset Confirm Dialog ── */}
+      <AnimatePresence>
+        {showResetConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowResetConfirm(false)}
+            className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-6"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.93, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.93 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-[320px] bg-white rounded-3xl shadow-2xl p-6"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center text-3xl mx-auto mb-4">
+                ⚠️
+              </div>
+              <h3 className="font-poppins font-bold text-slate-900 text-center text-lg mb-2">Reset All Progress?</h3>
+              <p className="text-sm font-inter text-slate-500 text-center leading-relaxed mb-6">
+                This will erase all your data, preferences and readiness progress. This action cannot be undone.
+              </p>
+              <div className="flex flex-col gap-2.5">
+                <button
+                  onClick={handleReset}
+                  className="w-full py-3.5 rounded-2xl text-sm font-poppins font-bold text-white bg-rose-500 hover:bg-rose-600 transition-colors"
+                >
+                  Yes, Reset Everything
+                </button>
+                <button
+                  onClick={() => setShowResetConfirm(false)}
+                  className="w-full py-3.5 rounded-2xl text-sm font-poppins font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
