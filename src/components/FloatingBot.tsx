@@ -37,7 +37,7 @@ export function FloatingBot() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowInfo(!showInfo)}
-          className="w-12 h-12 rounded-xl bg-white shadow-lg border border-slate-200 flex items-center justify-center text-slate-500 font-bold font-poppins transition-colors hover:border-slate-400"
+          className="w-7 h-7 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center text-slate-500 text-xs font-bold font-inter transition-colors hover:border-slate-400 self-center"
         >
           i
         </motion.button>
