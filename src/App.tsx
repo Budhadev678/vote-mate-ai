@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore } from './store/useStore'
+import { useAnalytics } from './hooks/useAnalytics'
 
 // ── Screens ────────────────────────────────────────────────────────
 import { LandingScreen } from './pages/LandingScreen'
@@ -48,7 +49,13 @@ function PageTransition({ children, screenKey }: { children: React.ReactNode; sc
 
 function App() {
   const { currentScreen, setOffline } = useStore()
+  const { trackScreen } = useAnalytics()
   const mainRef = useRef<HTMLElement>(null)
+
+  // ── Track screen views for Google Analytics + Firebase ──────────
+  useEffect(() => {
+    trackScreen(currentScreen)
+  }, [currentScreen, trackScreen])
 
   // ── Scroll to top on screen change ─────────────────────────────
   useEffect(() => {
@@ -162,7 +169,10 @@ function App() {
 
       {/* Main screen — min-h-0 is critical so flex children can shrink */}
       <main
+        id="main-content"
         ref={mainRef}
+        role="main"
+        aria-label="VoteMate AI main content"
         className="flex-1 min-h-0 flex flex-col w-full relative overflow-hidden"
       >
         <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
