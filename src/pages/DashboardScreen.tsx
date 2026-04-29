@@ -50,39 +50,43 @@ export function DashboardScreen() {
       <AlertBanner />
 
       {/* Header */}
-      <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg mb-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-white/80 text-xs font-inter mb-1">Welcome</p>
-            <h1 className="text-2xl font-poppins font-semibold text-white leading-tight">
-              {user.name || voterLabel}
-            </h1>
-            {user.state && (
-              <div className="flex items-center gap-1 mt-1.5">
-                <MapPin className="w-3.5 h-3.5 text-white/80" />
-                <span className="text-white/90 text-sm font-inter">{user.state}</span>
+      <div className="flex-shrink-0 relative overflow-hidden rounded-b-3xl shadow-lg mb-6" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%)' }}>
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 0%, transparent 60%)' }} />
+        <div className="relative px-5 pt-10 pb-6">
+          <div className="flex items-start justify-between mb-5">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className="text-white/60 text-xs font-inter">Welcome back 👋</span>
               </div>
-            )}
-          </div>
+              <h1 className="text-2xl font-poppins font-bold text-white leading-tight truncate">
+                {user.name || voterLabel}
+              </h1>
+              {user.state && (
+                <div className="flex items-center gap-1 mt-1">
+                  <MapPin className="w-3 h-3 text-white/60" />
+                  <span className="text-white/70 text-xs font-inter">{user.state}</span>
+                </div>
+              )}
+            </div>
 
-          <div className="relative">
-            {/* Sync check: v2 */}
-            <ReadinessRing score={user.readinessScore} size={64} label="Readiness" />
-            <div className="absolute -top-1 -right-1">
-              <InfoButton text="Your Readiness Score is calculated based on Registration, Verification, ID check, and finding your Booth. Keep completing steps to hit 100%!" />
+            <div className="relative flex-shrink-0 ml-3">
+              <ReadinessRing score={user.readinessScore} size={64} label="Readiness" />
+              <div className="absolute -top-1 -right-1">
+                <InfoButton text="Your Readiness Score is calculated based on Registration, Verification, ID check, and finding your Booth. Keep completing steps to hit 100%!" />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Progress bar */}
-        <div className="mt-6 pt-5 border-t border-white/20">
-          <p className="text-white/80 text-xs font-inter mb-3 font-medium uppercase tracking-wider">Your Progress</p>
-          <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/10">
-            <ProgressBar
-              steps={JOURNEY_STEPS}
-              current={user.currentStep}
-              completed={user.stepsCompleted}
-            />
+          {/* Progress bar */}
+          <div className="pt-4 border-t border-white/15">
+            <p className="text-white/60 text-[10px] font-inter mb-2 font-bold uppercase tracking-widest">Your Journey</p>
+            <div className="bg-white/10 p-3 rounded-2xl border border-white/10">
+              <ProgressBar
+                steps={JOURNEY_STEPS}
+                current={user.currentStep}
+                completed={user.stepsCompleted}
+              />
+            </div>
           </div>
         </div>
       </div>

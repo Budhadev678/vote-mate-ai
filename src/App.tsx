@@ -38,7 +38,7 @@ function PageTransition({ children, screenKey }: { children: React.ReactNode; sc
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.15 }}
-        className="flex-1 flex flex-col"
+        className="flex-1 flex flex-col min-h-0"
       >
         {children}
       </motion.div>
@@ -155,13 +155,20 @@ function App() {
     }
   }
 
+  const isChatScreen = currentScreen === 'chat'
+
   return (
     <div className="w-full max-w-[480px] mx-auto h-[100dvh] bg-slate-50 flex flex-col relative shadow-2xl sm:border-x sm:border-slate-200 overflow-hidden">
       {/* Offline banner */}
       <OfflineBanner />
 
       {/* Main screen */}
-      <main ref={mainRef} className="flex-1 flex flex-col w-full overflow-y-auto overflow-x-hidden relative">
+      <main
+        ref={mainRef}
+        className={`flex-1 flex flex-col w-full relative ${
+          isChatScreen ? 'overflow-hidden' : 'overflow-y-auto overflow-x-hidden'
+        }`}
+      >
         <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
       </main>
 
