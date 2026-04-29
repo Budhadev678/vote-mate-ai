@@ -47,7 +47,7 @@ export function ProfileScreen() {
   ]
 
   return (
-    <div className="min-h-full bg-mesh pb-40">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
       {/* Header */}
       <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg relative mb-6">
         <button

@@ -41,7 +41,7 @@ export function PollingBoothScreen() {
   const currentSlotIdx = nowHour < 8 ? 0 : nowHour < 10 ? 1 : nowHour < 12 ? 2 : nowHour < 14 ? 3 : nowHour < 16 ? 4 : 5
 
   return (
-    <div className="min-h-full bg-slate-50 flex flex-col pb-28">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
       {/* Header */}
       <div className="flex-shrink-0 relative overflow-hidden rounded-b-3xl shadow-lg mb-1" style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)' }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, white 0%, transparent 60%)' }} />

@@ -78,7 +78,7 @@ export function OnboardingScreen() {
   }
 
   return (
-    <div className="min-h-full bg-slate-50 flex flex-col px-6 py-10 pb-40">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 px-6 py-10 pb-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-10">
         <button

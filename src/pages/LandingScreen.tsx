@@ -21,7 +21,7 @@ export function LandingScreen() {
   }
 
   return (
-    <div className="min-h-full flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%)' }}>
+    <div className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col relative" style={{ background: 'linear-gradient(160deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%)' }}>
       {/* Decorative blobs */}
       <div className="absolute top-0 left-0 w-72 h-72 rounded-full opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle, #3b82f6 0%, transparent 70%)', transform: 'translate(-30%, -30%)' }} />
       <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)', transform: 'translate(30%, 30%)' }} />

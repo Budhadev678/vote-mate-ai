@@ -12,7 +12,7 @@ export function CandidatesScreen() {
   const { goBack } = useStore()
   
   return (
-    <div className="min-h-full bg-slate-50 pb-40">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
       {/* Header */}
       <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
         <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">

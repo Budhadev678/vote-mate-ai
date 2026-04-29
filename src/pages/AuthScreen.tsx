@@ -30,7 +30,7 @@ export function AuthScreen() {
   }
 
   return (
-    <div className="min-h-full bg-slate-50 flex flex-col px-6 py-12 items-center justify-center relative overflow-hidden">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 flex flex-col px-6 py-12 items-center justify-center relative">
       <motion.div
         className="max-w-sm w-full relative z-10"
         initial={{ opacity: 0, y: 20 }}

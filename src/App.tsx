@@ -155,19 +155,15 @@ function App() {
     }
   }
 
-  const isChatScreen = currentScreen === 'chat'
-
   return (
     <div className="w-full max-w-[480px] mx-auto h-[100dvh] bg-slate-50 flex flex-col relative shadow-2xl sm:border-x sm:border-slate-200 overflow-hidden">
       {/* Offline banner */}
       <OfflineBanner />
 
-      {/* Main screen */}
+      {/* Main screen — min-h-0 is critical so flex children can shrink */}
       <main
         ref={mainRef}
-        className={`flex-1 flex flex-col w-full relative ${
-          isChatScreen ? 'overflow-hidden' : 'overflow-y-auto overflow-x-hidden'
-        }`}
+        className="flex-1 min-h-0 flex flex-col w-full relative overflow-hidden"
       >
         <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
       </main>
