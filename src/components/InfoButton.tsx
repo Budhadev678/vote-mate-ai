@@ -9,7 +9,7 @@ export function InfoButton({ text }: { text: string }) {
     <div className="relative inline-block z-50">
       <button
         onClick={() => setShow(true)}
-        className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white transition-all active:scale-95"
+        className="w-7 h-7 rounded-full bg-blue-100 hover:bg-blue-200 border border-blue-200 flex items-center justify-center text-blue-600 transition-all active:scale-95 shadow-sm"
       >
         <Info className="w-4 h-4" />
       </button>
@@ -22,14 +22,15 @@ export function InfoButton({ text }: { text: string }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShow(false)}
-              className="fixed inset-0 z-40 bg-black/5"
-            />
-            <motion.div
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="absolute right-0 top-10 w-64 bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-200 p-4 z-50 origin-top-right"
+              className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4"
             >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-[300px] bg-white text-gray-800 rounded-3xl shadow-2xl border border-gray-200 p-5 relative"
+              >
               <button
                 onClick={() => setShow(false)}
                 className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 rounded-full bg-gray-50"
@@ -43,6 +44,7 @@ export function InfoButton({ text }: { text: string }) {
               <p className="text-xs font-inter leading-relaxed text-gray-600">
                 {text}
               </p>
+            </motion.div>
             </motion.div>
           </>
         )}

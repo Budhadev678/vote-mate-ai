@@ -16,7 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: User, label: 'Profile', screen: 'profile' },
 ]
 
-const HIDE_ON: Screen[] = ['landing', 'onboarding']
+const HIDE_ON: Screen[] = ['landing', 'onboarding', 'chat']
 
 export function BottomNav() {
   const { currentScreen, navigate } = useStore()
