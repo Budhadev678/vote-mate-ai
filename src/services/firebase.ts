@@ -16,6 +16,7 @@
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app'
 import { getFirestore, collection, addDoc, serverTimestamp, type Firestore } from 'firebase/firestore'
 import { getAnalytics, logEvent, isSupported, type Analytics } from 'firebase/analytics'
+import { getFunctions, httpsCallable, type Functions } from 'firebase/functions'
 
 // ─── Detect if real Firebase config is provided ───────────────────
 const FIREBASE_API_KEY  = import.meta.env.VITE_FIREBASE_API_KEY  ?? ''
@@ -58,6 +59,18 @@ async function getDb(): Promise<Firestore | null> {
   try {
     if (!_db) _db = getFirestore(app)
     return _db
+  } catch {
+    return null
+  }
+}
+
+let _functions: Functions | null = null
+function getFunctionsInstance(): Functions | null {
+  const app = getApp()
+  if (!app) return null
+  try {
+    if (!_functions) _functions = getFunctions(app)
+    return _functions
   } catch {
     return null
   }
@@ -153,5 +166,22 @@ export async function logBoothSearch(state: string): Promise<void> {
     })
   } catch {
     // Silently ignore
+  }
+}
+
+/**
+ * Calls the secure Google Cloud Function for backend insights
+ */
+export async function fetchRegionalInsights(stateName: string) {
+  const functions = getFunctionsInstance()
+  if (!functions) return null
+  
+  try {
+    const getInsights = httpsCallable(functions, 'getRegionalInsights')
+    const result = await getInsights({ state: stateName })
+    return result.data
+  } catch {
+    console.warn('Cloud function fallback active')
+    return null
   }
 }

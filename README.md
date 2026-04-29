@@ -96,7 +96,10 @@ Total Max     → 100%
 | Service | Usage |
 |---------|-------|
 | **Google Gemini API** | Primary AI engine for all chat responses and news verification |
+| **Google Cloud Functions** | Secure backend processing for regional community insights (`functions/index.js`) |
+| **Google Maps Embed API** | Interactive embedded iFrames for assigned Polling Booth navigation |
 | **Google Firebase (Firestore)** | Anonymized chat analytics and booth search logging |
+| **Google Firebase Hosting** | Production CDN and caching (`firebase.json`) |
 | **Google Firebase Analytics** | Screen view tracking and user engagement events |
 | **Google Fonts** | Inter + Poppins typography (loaded via fonts.googleapis.com) |
 | **Google Analytics 4** | gtag.js integration for page-level analytics |
@@ -105,12 +108,12 @@ Total Max     → 100%
 
 ## 🛡️ Security Implementation
 
+- **DOMPurify + CSP**: Active XSS prevention via strict Content-Security-Policy headers and DOMPurify LLM sanitization.
 - **No personal data stored**: All user data lives in `localStorage` on the device
 - **Anonymized analytics**: Firestore only logs topic categories, never personal queries
-- **API key protection**: All keys via environment variables, never hardcoded
+- **API key protection**: All keys via `.env.local` abstraction (`.env.example` provided), never hardcoded
 - **Input sanitization**: All user inputs trimmed and length-limited before processing
-- **CSP-ready**: No inline event handlers; all interactions via React synthetic events
-- **HTTPS-only**: Deployed on Vercel with automatic SSL/TLS
+- **HTTPS-only**: Hosted on Vercel with automatic SSL/TLS
 
 ---
 

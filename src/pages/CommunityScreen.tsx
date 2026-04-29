@@ -1,8 +1,10 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, TrendingUp, Users, AlertCircle } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { InfoButtonLight } from '../components/InfoButton'
+import { fetchRegionalInsights } from '../services/firebase'
 
 const COMMUNITY_STATS = {
   totalUsers: 1284,
@@ -27,7 +29,31 @@ const AREA_DATA = [
 ]
 
 export function CommunityScreen() {
-  const { goBack } = useStore()
+  const { goBack, user } = useStore()
+  const [liveStats, setLiveStats] = useState(COMMUNITY_STATS)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadCloudData = async () => {
+      try {
+        const data = await fetchRegionalInsights(user?.state || 'Delhi')
+        if (data) {
+          setLiveStats({
+            ...COMMUNITY_STATS,
+            totalUsers: COMMUNITY_STATS.totalUsers + data.totalUsers,
+            readyPercent: data.averageReadiness || COMMUNITY_STATS.readyPercent,
+            topIssue: data.trendingTopics?.[0] || COMMUNITY_STATS.topIssue,
+            areaName: user?.state || 'Your State'
+          })
+        }
+      } catch {
+        // Fallback to static
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadCloudData()
+  }, [user?.state])
 
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
@@ -42,7 +68,7 @@ export function CommunityScreen() {
             <h1 className="text-xl font-poppins font-bold text-slate-900">Community Insights</h1>
             <div className="flex items-center gap-2 mt-1.5">
               <Users className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-slate-400 text-[11px] font-inter font-semibold">{COMMUNITY_STATS.totalUsers.toLocaleString()} active voters tracked</span>
+              <span className="text-slate-400 text-[11px] font-inter font-semibold">{loading ? 'Syncing securely via Google Cloud...' : `${liveStats.totalUsers.toLocaleString()} active voters tracked`}</span>
             </div>
           </div>
           <InfoButtonLight

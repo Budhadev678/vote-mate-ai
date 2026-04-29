@@ -157,19 +157,18 @@ export function PollingBoothScreen() {
                 ))}
               </div>
 
-              {/* Map Placeholder */}
-              <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl h-36 flex items-center justify-center mb-4 overflow-hidden relative border border-slate-100">
-                <div className="text-center relative z-10">
-                  <div className="text-3xl mb-1">🗺️</div>
-                  <p className="text-xs font-inter text-slate-500">Interactive map preview</p>
-                </div>
-                <motion.div
-                  animate={{ y: [-4, 0, -4] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl"
-                >
-                  📍
-                </motion.div>
+              {/* Google Maps Embed */}
+              <div className="rounded-xl h-40 w-full mb-4 overflow-hidden border border-slate-200 shadow-sm">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(MOCK_BOOTH.name + ' ' + MOCK_BOOTH.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+                  title="Google Maps Polling Booth Location"
+                ></iframe>
               </div>
 
               {/* Action Buttons */}
