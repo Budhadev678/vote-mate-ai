@@ -88,18 +88,20 @@ export function ProfileScreen() {
           style={{ background: 'radial-gradient(circle,white,transparent 70%)', transform: 'translate(30%,-30%)' }} />
 
         {/* Back + Info row */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-start sm:items-center justify-between gap-4 mb-6">
           <button
             onClick={goBack}
-            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors flex-shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-inter font-medium">Back</span>
           </button>
-          <InfoButtonLight
-            text="Your profile stores your preferences locally on your device. No personal data is sent to external servers. You can reset all data at any time."
-            title="Profile & Privacy"
-          />
+          <div className="flex-shrink-0 mt-1 sm:mt-0">
+            <InfoButtonLight
+              text="Your profile stores your preferences locally on your device. No personal data is sent to external servers. You can reset all data at any time."
+              title="Profile & Privacy"
+            />
+          </div>
         </div>
 
         {/* Avatar + name + ring */}

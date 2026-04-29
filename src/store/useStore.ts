@@ -33,7 +33,7 @@ const DEFAULT_PROFILE: UserProfile = {
 // ─── Voting day (configurable) ────────────────────────────────────
 const VOTING_DATE = new Date('2026-05-20')
 
-interface VoteMateStor {
+interface VoteMateStore {
   // ── Navigation ──────────────────────────────────────────────────
   currentScreen: Screen
   screenHistory: Screen[]
@@ -184,7 +184,7 @@ function buildAlerts(): AppAlert[] {
   return alerts
 }
 
-export const useStore = create<VoteMateStor>()(
+export const useStore = create<VoteMateStore>()(
   persist(
     (set, get) => ({
       // ── Navigation ────────────────────────────────────────────────
@@ -271,6 +271,7 @@ export const useStore = create<VoteMateStor>()(
         const now = new Date()
         const diff = Math.ceil((VOTING_DATE.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
         return {
+          name: user.name,
           userType: user.voterType,
           state: user.state,
           language: user.language,
@@ -298,7 +299,7 @@ export const useStore = create<VoteMateStor>()(
     }),
     {
       name: 'votemate-store',
-      partialState: (s: VoteMateStor) => ({
+      partialState: (s: VoteMateStore) => ({
         user: s.user,
         messages: s.messages?.slice(-50) ?? [],
         familyMembers: s.familyMembers ?? [],

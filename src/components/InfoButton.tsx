@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Info, X } from 'lucide-react'
 
@@ -8,7 +8,14 @@ interface InfoButtonProps {
   position?: 'default' | 'left'
 }
 
-export function InfoButton({ text, title = 'Information' }: InfoButtonProps) {
+/**
+ * InfoButton — displays contextual help information in a modal overlay.
+ * Used on dark gradient backgrounds (white icon style).
+ *
+ * @param text - Help text content to display
+ * @param title - Modal header title (default: 'Information')
+ */
+function InfoButtonBase({ text, title = 'Information' }: InfoButtonProps) {
   const [show, setShow] = useState(false)
 
   return (
@@ -17,9 +24,9 @@ export function InfoButton({ text, title = 'Information' }: InfoButtonProps) {
       <button
         onClick={() => setShow(true)}
         className="w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 flex items-center justify-center text-white/80 hover:text-white transition-all active:scale-95 shadow-sm flex-shrink-0"
-        aria-label="More information"
+        aria-label={`Show information about ${title}`}
       >
-        <Info className="w-3.5 h-3.5" />
+        <Info className="w-3.5 h-3.5" aria-hidden="true" />
       </button>
 
       {/* Modal overlay */}
@@ -31,6 +38,9 @@ export function InfoButton({ text, title = 'Information' }: InfoButtonProps) {
             exit={{ opacity: 0 }}
             onClick={() => setShow(false)}
             className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-end justify-center p-4 sm:items-center"
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
           >
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -45,15 +55,16 @@ export function InfoButton({ text, title = 'Information' }: InfoButtonProps) {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center"
                     style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
-                    <Info className="w-4 h-4 text-white" />
+                    <Info className="w-4 h-4 text-white" aria-hidden="true" />
                   </div>
                   <p className="font-poppins font-semibold text-sm text-slate-900">{title}</p>
                 </div>
                 <button
                   onClick={() => setShow(false)}
+                  aria-label="Close information dialog"
                   className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -80,8 +91,16 @@ export function InfoButton({ text, title = 'Information' }: InfoButtonProps) {
   )
 }
 
-/* Variant for dark (white bg) contexts */
-export function InfoButtonLight({ text, title = 'Information' }: { text: string; title?: string }) {
+export const InfoButton = memo(InfoButtonBase)
+
+/**
+ * InfoButtonLight — variant for light/white backgrounds.
+ * Uses a slate-colored trigger icon instead of white.
+ *
+ * @param text - Help text content to display
+ * @param title - Modal header title (default: 'Information')
+ */
+function InfoButtonLightBase({ text, title = 'Information' }: { text: string; title?: string }) {
   const [show, setShow] = useState(false)
 
   return (
@@ -89,9 +108,9 @@ export function InfoButtonLight({ text, title = 'Information' }: { text: string;
       <button
         onClick={() => setShow(true)}
         className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-all active:scale-95 shadow-sm flex-shrink-0"
-        aria-label="More information"
+        aria-label={`Show information about ${title}`}
       >
-        <Info className="w-3.5 h-3.5" />
+        <Info className="w-3.5 h-3.5" aria-hidden="true" />
       </button>
 
       <AnimatePresence>
@@ -102,6 +121,9 @@ export function InfoButtonLight({ text, title = 'Information' }: { text: string;
             exit={{ opacity: 0 }}
             onClick={() => setShow(false)}
             className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-end justify-center p-4 sm:items-center"
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
           >
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -115,15 +137,16 @@ export function InfoButtonLight({ text, title = 'Information' }: { text: string;
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center"
                     style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}>
-                    <Info className="w-4 h-4 text-white" />
+                    <Info className="w-4 h-4 text-white" aria-hidden="true" />
                   </div>
                   <p className="font-poppins font-semibold text-sm text-slate-900">{title}</p>
                 </div>
                 <button
                   onClick={() => setShow(false)}
+                  aria-label="Close information dialog"
                   className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </div>
               <div className="px-5 py-4">
@@ -145,3 +168,5 @@ export function InfoButtonLight({ text, title = 'Information' }: { text: string;
     </>
   )
 }
+
+export const InfoButtonLight = memo(InfoButtonLightBase)

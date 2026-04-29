@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Check2, } from 'lucide-react'
+import { Check } from 'lucide-react'
 
 interface Props {
   steps: { id: string; label: string }[]
@@ -45,7 +45,7 @@ export function ProgressBar({ steps, current, completed }: Props) {
                 }`}
               >
                 {isDone ? (
-                  <Check2 className="w-5 h-5" />
+                  <Check className="w-5 h-5" aria-hidden="true" />
                 ) : isCurrent ? (
                   <div className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse" />
                 ) : (

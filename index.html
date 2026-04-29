@@ -5,7 +5,9 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://firestore.googleapis.com https://*.firebaseio.com; img-src 'self' data:; object-src 'none';" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Permissions-Policy" content="geolocation=(self), camera=(), microphone=(self)" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://generativelanguage.googleapis.com https://firestore.googleapis.com https://*.firebaseio.com https://translation.googleapis.com https://maps.googleapis.com https://language.googleapis.com https://firebaseremoteconfig.googleapis.com https://firebaseinstallations.googleapis.com; img-src 'self' data: https://maps.google.com https://maps.googleapis.com; frame-src https://maps.google.com https://www.google.com; object-src 'none';" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
@@ -13,7 +15,7 @@
     <meta name="description" content="VoteMate AI guides first-time and experienced voters through every step of India's election process with AI-powered assistance, step-by-step guidance, and real-time information." />
     <meta name="theme-color" content="#0f172a" />
     <meta name="application-name" content="VoteMate AI" />
-    <meta name="keywords" content="India election, voter registration, polling booth, ECI, vote, VoteMate, election guide" />
+    <meta name="keywords" content="India election, voter registration, polling booth, ECI, vote, VoteMate, election guide, Google Gemini AI" />
 
     <!-- Open Graph -->
     <meta property="og:title" content="VoteMate AI – Your Personal Election Companion" />
@@ -64,6 +66,14 @@
   <body>
     <!-- Skip to main content (Accessibility) -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <noscript>
+      <div style="padding:20px;text-align:center;font-family:Inter,sans-serif;">
+        <h1>VoteMate AI requires JavaScript</h1>
+        <p>Please enable JavaScript in your browser to use VoteMate AI.</p>
+        <p>For election help without JavaScript, call the Voter Helpline: <strong>1950</strong></p>
+      </div>
+    </noscript>
 
     <div id="root" role="application" aria-label="VoteMate AI Application"></div>
     <script type="module" src="/src/main.tsx"></script>

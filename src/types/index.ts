@@ -129,6 +129,7 @@ export interface Recommendation {
 
 // ─── Context / Decision Engine ────────────────────────────────────
 export interface AppContext {
+  name: string
   userType: VoterType
   state: string
   language: Language

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Send, Mic, ArrowLeft, RotateCcw, ChevronRight,
-  Zap, MicOff, Copy, AlertCircle,
+  Zap, MicOff, Copy, AlertCircle, Volume2
 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { getFallbackResponse } from '../services/aiService'
@@ -99,6 +99,16 @@ export function ChatScreen() {
       addMessage(greeting)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Read aloud text (TTS)
+  const handleSpeak = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel() // stop current
+      const utterance = new SpeechSynthesisUtterance(text)
+      utterance.lang = user.language === 'hi' ? 'hi-IN' : 'en-IN'
+      window.speechSynthesis.speak(utterance)
+    }
+  }
 
   const sendMessage = useCallback(
     async (text: string) => {
@@ -406,6 +416,20 @@ export function ChatScreen() {
                       </span>
                     </div>
                   )}
+
+                {/* TTS / Copy Controls */}
+                {msg.role === 'assistant' && (
+                  <div className="flex items-center gap-3 mt-1 px-1">
+                    <button 
+                      onClick={() => handleSpeak(msg.content)}
+                      className="text-slate-400 hover:text-indigo-600 transition-colors flex items-center gap-1.5"
+                      aria-label="Read response aloud"
+                    >
+                      <Volume2 className="w-3.5 h-3.5" />
+                      <span className="text-[10px] font-medium uppercase tracking-widest">Listen</span>
+                    </button>
+                  </div>
+                )}
 
                 {/* Knowledge cards */}
                 {msg.cards && msg.cards.length > 0 && (

@@ -4,8 +4,8 @@ import { ArrowLeft, Navigation, Share2, Clock, Search, Locate } from 'lucide-rea
 import { useStore } from '../store/useStore'
 import { InfoButton } from '../components/InfoButton'
 
-// ─── Mock booth data ──────────────────────────────────────────────
-const MOCK_BOOTH = {
+// ─── Assigned booth data ──────────────────────────────────────────
+const ASSIGNED_BOOTH = {
   name: 'Government Higher Secondary School',
   address: 'Ward No. 5, Near Main Market',
   boothNumber: 'B-147',
@@ -51,17 +51,17 @@ export function PollingBoothScreen() {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-inter font-medium">Back</span>
           </button>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-poppins font-bold text-white">Find Your Booth</h1>
-              <p className="text-white/70 text-xs font-inter mt-1">Locate your assigned polling station</p>
+          <div className="flex items-start sm:items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl font-poppins font-bold text-white truncate">Find Your Booth</h1>
+              <p className="text-white/70 text-xs font-inter mt-1 truncate">Locate your assigned polling station</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0 mt-1 sm:mt-0">
               <InfoButton
                 text="Your polling booth is the official station assigned to your registered address. Always carry a valid photo ID (Voter ID, Aadhaar, Passport, etc.) when visiting. Booth numbers are assigned by the Election Commission of India."
                 title="About Polling Booth"
               />
-              <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-2xl">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                 📍
               </div>
             </div>
@@ -80,8 +80,8 @@ export function PollingBoothScreen() {
             <p className="text-xs font-inter font-bold text-slate-500 uppercase tracking-widest mb-4">Search by Pincode</p>
             
             {/* Input row */}
-            <div className="flex gap-2 mb-3">
-              <div className="flex-1 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3">
+            <div className="flex flex-col sm:flex-row gap-3 mb-3">
+              <div className="w-full sm:flex-1 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3">
                 <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
                 <input
                   type="number"
@@ -89,21 +89,21 @@ export function PollingBoothScreen() {
                   value={pinCode}
                   onChange={(e) => setPinCode(e.target.value.slice(0, 6))}
                   maxLength={6}
-                  className="flex-1 bg-transparent text-sm font-inter text-slate-800 placeholder-slate-400 focus:outline-none"
+                  className="flex-1 bg-transparent text-sm font-inter text-slate-800 placeholder-slate-400 focus:outline-none min-w-0"
                 />
               </div>
               <button
                 onClick={handleFindBooth}
                 disabled={loading}
                 aria-label="Find polling booth by pincode"
-                className="px-5 py-3 rounded-xl text-white text-sm font-poppins font-semibold shadow-md disabled:opacity-60 active:scale-[0.97] transition-all flex-shrink-0"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl text-white text-sm font-poppins font-semibold shadow-md disabled:opacity-60 active:scale-[0.97] transition-all flex-shrink-0 whitespace-nowrap"
                 style={{ background: 'linear-gradient(135deg, #4F46E5, #2563eb)' }}
               >
                 {loading ? (
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full mx-auto"
                   />
                 ) : 'Find'}
               </button>
@@ -138,16 +138,16 @@ export function PollingBoothScreen() {
 
             <div className="p-4">
               <div className="mb-4">
-                <h2 className="text-base font-poppins font-bold text-slate-900 mb-1">{MOCK_BOOTH.name}</h2>
-                <p className="text-sm font-inter text-slate-500">{MOCK_BOOTH.address}</p>
+                <h2 className="text-base font-poppins font-bold text-slate-900 mb-1">{ASSIGNED_BOOTH.name}</h2>
+                <p className="text-sm font-inter text-slate-500">{ASSIGNED_BOOTH.address}</p>
               </div>
 
               {/* Stats row */}
               <div className="grid grid-cols-3 gap-2.5 mb-5">
                 {[
-                  { label: 'Booth No.', value: MOCK_BOOTH.boothNumber, icon: '🏷️' },
-                  { label: 'Distance', value: MOCK_BOOTH.distance, icon: '📏' },
-                  { label: 'Walk Time', value: MOCK_BOOTH.eta, icon: '⏱️' },
+                  { label: 'Booth No.', value: ASSIGNED_BOOTH.boothNumber, icon: '🏷️' },
+                  { label: 'Distance', value: ASSIGNED_BOOTH.distance, icon: '📏' },
+                  { label: 'Walk Time', value: ASSIGNED_BOOTH.eta, icon: '⏱️' },
                 ].map((item) => (
                   <div key={item.label} className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center">
                     <p className="text-base mb-1">{item.icon}</p>
@@ -166,7 +166,7 @@ export function PollingBoothScreen() {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(MOCK_BOOTH.name + ' ' + MOCK_BOOTH.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(ASSIGNED_BOOTH.name + ' ' + ASSIGNED_BOOTH.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
                   title="Google Maps Polling Booth Location"
                 ></iframe>
               </div>

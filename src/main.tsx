@@ -4,9 +4,20 @@ import './index.css'
 import App from './App.tsx'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import { validateEnvironment } from './utils/sanitize.ts'
+import { initPerformanceMonitoring, initRemoteConfig } from './services/googleServices.ts'
 
 // Validate environment variables on startup
 validateEnvironment()
+
+/**
+ * Initialize Google Firebase services on app boot:
+ * - Firebase Performance Monitoring (web vitals, network traces)
+ * - Firebase Remote Config (feature flags, dynamic election dates)
+ *
+ * Both services degrade gracefully if credentials are absent.
+ */
+initPerformanceMonitoring()
+initRemoteConfig().catch(console.debug)
 
 const rootElement = document.getElementById('root')
 if (!rootElement) {
@@ -17,6 +28,8 @@ if (!rootElement) {
  * Dynamically updates the document `lang` attribute based on the
  * user's language preference stored in Zustand. This is critical for
  * screen readers and search engines to correctly interpret the page language.
+ *
+ * @param lang - Language code ('en', 'hi', 'or')
  */
 function updateDocumentLang(lang: string): void {
   const langMap: Record<string, string> = {

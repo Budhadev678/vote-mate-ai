@@ -28,21 +28,23 @@ export function QuickModeScreen() {
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-inter font-medium">Back</span>
         </button>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm"
+        <div className="flex items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm flex-shrink-0"
               style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>
               <Zap className="w-5 h-5" />
             </div>
-            <div>
-              <h1 className="text-xl font-poppins font-bold text-slate-900">Quick Guide</h1>
-              <p className="text-slate-400 text-[11px] font-inter font-semibold mt-0.5">Essential info for busy voters</p>
+            <div className="min-w-0">
+              <h1 className="text-xl font-poppins font-bold text-slate-900 truncate">Quick Guide</h1>
+              <p className="text-slate-400 text-[11px] font-inter font-semibold mt-0.5 truncate">Essential info for busy voters</p>
             </div>
           </div>
-          <InfoButtonLight
-            text="Quick Mode gives you the most essential election information in under 2 minutes. For a complete guided journey with step-by-step instructions, use the Guided Mode from Dashboard."
-            title="Quick Mode"
-          />
+          <div className="flex-shrink-0 mt-1 sm:mt-0">
+            <InfoButtonLight
+              text="Quick Mode gives you the most essential election information in under 2 minutes. For a complete guided journey with step-by-step instructions, use the Guided Mode from Dashboard."
+              title="Quick Mode"
+            />
+          </div>
         </div>
       </div>
 

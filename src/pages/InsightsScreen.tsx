@@ -38,15 +38,17 @@ export function InsightsScreen() {
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-inter font-medium">Back</span>
         </button>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-poppins font-bold text-white">Readiness Analysis</h1>
-            <p className="text-white/70 text-xs font-inter mt-1">Your official voting preparation metrics</p>
+        <div className="flex items-start sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-poppins font-bold text-white truncate">Readiness Analysis</h1>
+            <p className="text-white/70 text-xs font-inter mt-1 truncate">Your official voting preparation metrics</p>
           </div>
-          <InfoButton
-            text="Your Readiness Score is calculated from 4 key milestones: Voter Registration, Detail Verification, ID Document check, and Polling Booth location. Complete all steps to reach 100%."
-            title="Readiness Score"
-          />
+          <div className="flex-shrink-0 mt-1 sm:mt-0">
+            <InfoButton
+              text="Your Readiness Score is calculated from 4 key milestones: Voter Registration, Detail Verification, ID Document check, and Polling Booth location. Complete all steps to reach 100%."
+              title="Readiness Score"
+            />
+          </div>
         </div>
       </div>
 

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Shield, AlertTriangle, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Shield, AlertTriangle, ExternalLink, Brain } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { verifyNews } from '../services/aiService'
+import { useAnalytics } from '../hooks/useAnalytics'
 import type { NewsAnalysis } from '../types'
 
 const VERDICT_CONFIG = {
@@ -49,9 +50,10 @@ const SAMPLE_NEWS = [
 
 export function VerifyNewsScreen() {
   const { goBack, user } = useStore()
+  const { trackFeature } = useAnalytics()
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<NewsAnalysis | null>(null)
+  const [result, setResult] = useState<(NewsAnalysis & { sentimentLabel?: string }) | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const handleAnalyze = async () => {
@@ -59,9 +61,10 @@ export function VerifyNewsScreen() {
     setLoading(true)
     setResult(null)
     setError(null)
+    trackFeature('news_verification')
     try {
       const analysis = await verifyNews(input, user.language)
-      setResult(analysis as NewsAnalysis)
+      setResult(analysis as NewsAnalysis & { sentimentLabel?: string })
     } catch {
       setError('Unable to analyze. Please try again.')
     } finally {
@@ -207,6 +210,17 @@ export function VerifyNewsScreen() {
                 </ul>
               </div>
 
+              {/* Google NLP Sentiment Analysis */}
+              {result.sentimentLabel && (
+                <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100 flex items-center gap-3">
+                  <Brain className="w-5 h-5 text-indigo-600 flex-shrink-0" aria-hidden="true" />
+                  <div>
+                    <p className="text-[10px] font-inter font-bold text-indigo-500 uppercase tracking-widest mb-1">Google NLP Sentiment</p>
+                    <p className="text-sm font-inter text-indigo-800 font-semibold capitalize">{result.sentimentLabel} Tone Detected</p>
+                  </div>
+                </div>
+              )}
+
               {/* Suggestion */}
               <div className="border-t border-slate-100 pt-5">
                 <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-2">Recommendation</p>
@@ -218,9 +232,10 @@ export function VerifyNewsScreen() {
                 href="https://eci.gov.in"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Cross-verify this news on the Election Commission of India website"
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-50 text-slate-900 text-xs font-inter font-bold border border-slate-200 hover:bg-slate-100 transition-colors"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                 Cross-verify on eci.gov.in
               </a>
             </motion.div>

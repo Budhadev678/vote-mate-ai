@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
-import { InfoButton } from '../components/InfoButton'
+import { InfoButtonLight } from '../components/InfoButton'
 
 // ─── Indian states list ───────────────────────────────────────────
 const STATES = [
@@ -80,18 +80,20 @@ export function OnboardingScreen() {
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 px-6 py-10 pb-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-10">
+      <div className="flex items-start sm:items-center justify-between mb-10 gap-4">
         <button
           onClick={() => onboardingStep > 0 && setOnboardingStep(onboardingStep - 1)}
-          className={`text-sm font-inter font-medium text-slate-500 hover:text-slate-900 transition-colors ${onboardingStep === 0 ? 'invisible' : ''}`}
+          className={`text-sm font-inter font-medium text-slate-500 hover:text-slate-900 transition-colors flex-shrink-0 ${onboardingStep === 0 ? 'invisible' : ''}`}
         >
           ← Back
         </button>
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-inter text-slate-400 font-medium">
+        <div className="flex items-center justify-end gap-3 flex-1 min-w-0">
+          <span className="text-sm font-inter text-slate-400 font-medium truncate">
             Step {onboardingStep + 1} of {totalSteps}
           </span>
-          <InfoButton text="We need these details to personalize your experience. Your data never leaves your device and is only used to compute your readiness score locally!" />
+          <div className="flex-shrink-0">
+            <InfoButtonLight text="We need these details to personalize your experience. Your data never leaves your device and is only used to compute your readiness score locally!" />
+          </div>
         </div>
       </div>
 

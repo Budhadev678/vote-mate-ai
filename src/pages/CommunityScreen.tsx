@@ -63,18 +63,20 @@ export function CommunityScreen() {
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm font-inter font-medium">Back</span>
         </button>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-poppins font-bold text-slate-900">Community Insights</h1>
+        <div className="flex items-start sm:items-center justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-poppins font-bold text-slate-900 truncate">Community Insights</h1>
             <div className="flex items-center gap-2 mt-1.5">
-              <Users className="w-3.5 h-3.5 text-slate-400" />
-              <span className="text-slate-400 text-[11px] font-inter font-semibold">{loading ? 'Syncing securely via Google Cloud...' : `${liveStats.totalUsers.toLocaleString()} active voters tracked`}</span>
+              <Users className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+              <span className="text-slate-400 text-[11px] font-inter font-semibold truncate">{loading ? 'Syncing securely via Google Cloud...' : `${liveStats.totalUsers.toLocaleString()} active voters tracked`}</span>
             </div>
           </div>
-          <InfoButtonLight
-            text="Community data is anonymized and aggregated from voters in your region. No personal information is shared or stored. Data helps identify common preparation gaps."
-            title="About This Data"
-          />
+          <div className="flex-shrink-0 mt-1 sm:mt-0">
+            <InfoButtonLight
+              text="Community data is anonymized and aggregated from voters in your region. No personal information is shared or stored. Data helps identify common preparation gaps."
+              title="About This Data"
+            />
+          </div>
         </div>
       </div>
 
