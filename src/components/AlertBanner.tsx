@@ -7,9 +7,9 @@ function AlertItem({ alert }: { alert: AppAlert }) {
   const { dismissAlert, navigate } = useStore()
 
   const styles = {
-    urgent: 'bg-red-600 text-white',
-    warning: 'bg-amber-500 text-white',
-    info: 'bg-blue-600 text-white',
+    urgent: 'bg-slate-900 border-b border-slate-800 text-white',
+    warning: 'bg-slate-900 border-b border-slate-800 text-white',
+    info: 'bg-slate-900 border-b border-slate-800 text-white',
   }
   const Icon = alert.type === 'urgent' ? Zap : alert.type === 'warning' ? AlertTriangle : Info
 
@@ -19,14 +19,16 @@ function AlertItem({ alert }: { alert: AppAlert }) {
       animate={{ height: 'auto', opacity: 1 }}
       exit={{ height: 0, opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className={`${styles[alert.type]} flex items-center gap-3 px-4 py-2.5 text-sm font-inter overflow-hidden`}
+      className={`${styles[alert.type]} flex items-center gap-3 px-5 py-3.5 text-xs font-inter overflow-hidden shadow-lg`}
     >
-      <Icon className="w-4 h-4 flex-shrink-0" />
-      <span className="flex-1">{alert.message}</span>
+      <div className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 ${alert.type === 'urgent' ? 'bg-slate-800 text-amber-400' : 'bg-slate-800 text-slate-400'}`}>
+        <Icon className="w-3.5 h-3.5" />
+      </div>
+      <span className="flex-1 font-medium text-slate-100">{alert.message}</span>
       {alert.actionLabel && alert.actionScreen && (
         <button
           onClick={() => navigate(alert.actionScreen!)}
-          className="bg-white/20 hover:bg-white/30 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors flex-shrink-0"
+          className="bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all flex-shrink-0 border border-white/5"
         >
           {alert.actionLabel}
         </button>
@@ -34,7 +36,7 @@ function AlertItem({ alert }: { alert: AppAlert }) {
       {alert.dismissible && (
         <button
           onClick={() => dismissAlert(alert.id)}
-          className="hover:bg-white/20 p-0.5 rounded transition-colors flex-shrink-0"
+          className="hover:bg-white/10 p-1.5 rounded-lg transition-all flex-shrink-0 text-slate-500"
         >
           <X className="w-3.5 h-3.5" />
         </button>

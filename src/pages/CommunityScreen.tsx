@@ -29,23 +29,20 @@ export function CommunityScreen() {
   const { goBack } = useStore()
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-slate-50 pb-28">
       {/* Header */}
-      <div
-        className="px-5 pt-8 pb-6"
-        style={{ background: 'linear-gradient(135deg, #5B21B6 0%, #8B5CF6 100%)' }}
-      >
-        <button onClick={goBack} className="text-white/80 mb-3 flex items-center gap-1 text-sm font-inter">
+      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
+        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-xl font-poppins font-bold text-white">📊 Community Insights</h1>
-        <p className="text-purple-200 text-sm font-inter mt-1">
-          How your community is preparing to vote
+        <h1 className="text-xl font-poppins font-semibold text-slate-900">Community Insights</h1>
+        <p className="text-slate-500 text-xs font-inter mt-1.5 font-medium">
+          Aggregated preparation metrics in your region
         </p>
-        <div className="flex items-center gap-2 mt-3">
-          <Users className="w-4 h-4 text-purple-300" />
-          <span className="text-purple-100 text-sm font-inter">
-            {COMMUNITY_STATS.totalUsers.toLocaleString()} users tracked
+        <div className="flex items-center gap-2 mt-4">
+          <Users className="w-4 h-4 text-slate-400" />
+          <span className="text-slate-400 text-[10px] font-inter font-bold uppercase tracking-widest">
+            {COMMUNITY_STATS.totalUsers.toLocaleString()} active voters
           </span>
         </div>
       </div>
@@ -55,10 +52,10 @@ export function CommunityScreen() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+          className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200"
         >
-          <p className="text-xs font-poppins font-semibold text-gray-500 uppercase tracking-wide mb-4">
-            Overall Readiness
+          <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-6">
+            Readiness Index
           </p>
           <div className="flex items-center gap-4">
             <ResponsiveContainer width={120} height={120}>
@@ -79,12 +76,12 @@ export function CommunityScreen() {
                 <Tooltip formatter={(v) => [`${v}%`]} />
               </PieChart>
             </ResponsiveContainer>
-            <div className="space-y-2.5 flex-1">
+            <div className="space-y-3 flex-1">
               {PIE_DATA.map((d) => (
-                <div key={d.name} className="flex items-center gap-2">
+                <div key={d.name} className="flex items-center gap-3">
                   <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: d.color }} />
-                  <span className="text-xs font-inter text-gray-700 flex-1">{d.name}</span>
-                  <span className="text-sm font-poppins font-bold" style={{ color: d.color }}>
+                  <span className="text-xs font-inter text-slate-600 flex-1 font-medium">{d.name}</span>
+                  <span className="text-sm font-poppins font-semibold text-slate-900">
                     {d.value}%
                   </span>
                 </div>
@@ -98,24 +95,24 @@ export function CommunityScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+          className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200"
         >
-          <p className="text-xs font-poppins font-semibold text-gray-500 uppercase tracking-wide mb-4">
-            📈 Step Completion
+          <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-6">
+            Step Completion Rate
           </p>
           <div className="space-y-3">
             {AREA_DATA.map((item, i) => (
               <div key={item.label}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-inter font-medium text-gray-700">{item.label}</span>
-                  <span className="text-xs font-poppins font-bold" style={{ color: item.color }}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-inter font-semibold text-slate-700">{item.label}</span>
+                  <span className="text-xs font-poppins font-bold text-slate-900">
                     {item.percent}%
                   </span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full rounded-full"
-                    style={{ background: item.color }}
+                    style={{ background: '#0f172a' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${item.percent}%` }}
                     transition={{ delay: i * 0.1 + 0.2, duration: 0.8 }}
@@ -131,14 +128,14 @@ export function CommunityScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-amber-50 rounded-2xl p-4 border border-amber-200 flex gap-3"
+          className="bg-slate-900 rounded-2xl p-5 text-white shadow-lg flex gap-4 relative overflow-hidden"
         >
-          <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-slate-400 flex-shrink-0" />
           <div>
-            <p className="text-sm font-poppins font-semibold text-amber-800">Biggest Barrier</p>
-            <p className="text-sm font-inter text-amber-700 mt-0.5">{COMMUNITY_STATS.topIssue}</p>
-            <p className="text-xs font-inter text-amber-600 mt-1">
-              Most users in your area struggle with this step
+            <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-1">Area Priority</p>
+            <p className="text-sm font-poppins font-medium">{COMMUNITY_STATS.topIssue}</p>
+            <p className="text-xs font-inter text-slate-400 mt-2 leading-relaxed">
+              Most voters in your region currently face this challenge. Ensure your documentation is verified early.
             </p>
           </div>
         </motion.div>
@@ -148,25 +145,27 @@ export function CommunityScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+          className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200"
         >
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-4 h-4 text-purple-600" />
-            <p className="text-xs font-poppins font-semibold text-gray-500 uppercase tracking-wide">
-              AI Insights
+          <div className="flex items-center gap-2 mb-6">
+            <TrendingUp className="w-4 h-4 text-slate-400" />
+            <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest">
+              AI Trends
             </p>
           </div>
-          {[
-            { icon: '📈', text: 'Readiness improved 12% this week in your area' },
-            { icon: '🗓️', text: 'Most users plan to vote between 8–10 AM' },
-            { icon: '📄', text: '36% users haven\'t checked their documents yet' },
-            { icon: '📍', text: '45% users haven\'t located their polling booth' },
-          ].map((insight, i) => (
-            <div key={i} className="flex items-start gap-2.5 py-2 border-b border-gray-50 last:border-0">
-              <span className="text-base">{insight.icon}</span>
-              <p className="text-xs font-inter text-gray-700">{insight.text}</p>
-            </div>
-          ))}
+          <div className="space-y-4">
+            {[
+              { icon: '📈', text: 'Preparation improved by 12% in your region this week' },
+              { icon: '🗓️', text: 'Peak voting intent identified between 8–10 AM' },
+              { icon: '📄', text: 'Document verification gap noted among first-time voters' },
+              { icon: '📍', text: 'High booth-finding success reported in your neighborhood' },
+            ].map((insight, i) => (
+              <div key={i} className="flex items-start gap-4 py-3 border-b border-slate-50 last:border-0 last:pb-0">
+                <span className="text-lg">{insight.icon}</span>
+                <p className="text-xs font-inter text-slate-700 leading-relaxed font-medium">{insight.text}</p>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Data source note */}

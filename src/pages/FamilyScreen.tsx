@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Plus, Trash2, MessageCircle } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Users, HelpCircle, ChevronRight } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import type { FamilyMember, MemberStatus } from '../types'
 
 function statusConfig(status: MemberStatus) {
   return {
-    ready: { label: 'Ready ✅', bg: 'bg-green-50', border: 'border-green-200', badge: 'badge-ready' },
-    partial: { label: 'Partial ⚠️', bg: 'bg-amber-50', border: 'border-amber-200', badge: 'badge-partial' },
-    'not-ready': { label: 'Not Ready ❗', bg: 'bg-red-50', border: 'border-red-200', badge: 'badge-notready' },
+    ready: { label: 'Verified', color: 'bg-slate-900 text-white', border: 'border-slate-900' },
+    partial: { label: 'In Progress', color: 'bg-slate-100 text-slate-500', border: 'border-slate-200' },
+    'not-ready': { label: 'Action Required', color: 'bg-slate-50 text-slate-400', border: 'border-slate-100' },
   }[status]
 }
 
@@ -42,99 +42,124 @@ export function FamilyScreen() {
   const readyCount = familyMembers.filter((m) => m.status === 'ready').length
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-slate-50 pb-28">
       {/* Header */}
-      <div
-        className="px-5 pt-8 pb-6"
-        style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%)' }}
-      >
-        <button onClick={goBack} className="text-white/80 mb-3 flex items-center gap-1 text-sm font-inter">
+      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
+        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-xl font-poppins font-bold text-white">👨‍👩‍👧 Family Voting</h1>
-        <p className="text-purple-200 text-sm font-inter mt-1">
-          Track readiness for your family members
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-sm">
+            <Users className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-poppins font-semibold text-slate-900">Family Readiness</h1>
+            <p className="text-slate-500 text-xs font-inter mt-1 font-medium">Manage and track your family's voting status</p>
+          </div>
+        </div>
+        
         {familyMembers.length > 0 && (
-          <div className="mt-3 bg-white/20 rounded-xl px-3 py-2 inline-flex items-center gap-2">
-            <span className="text-white font-poppins font-bold">{readyCount}/{familyMembers.length}</span>
-            <span className="text-purple-100 text-xs font-inter">members ready</span>
+          <div className="mt-6 flex items-center gap-3 bg-slate-50 px-4 py-3 rounded-2xl border border-slate-100">
+            <div className="flex -space-x-2">
+              {familyMembers.slice(0, 3).map((m, i) => (
+                <div key={m.id} className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs shadow-sm">
+                  {m.ageGroup === 'youth' ? '👦' : m.ageGroup === 'senior' ? '👴' : '👤'}
+                </div>
+              ))}
+              {familyMembers.length > 3 && (
+                <div className="w-7 h-7 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-[10px] text-white font-bold">
+                  +{familyMembers.length - 3}
+                </div>
+              )}
+            </div>
+            <p className="text-xs font-inter text-slate-600 font-semibold">
+              {readyCount} of {familyMembers.length} members verified
+            </p>
           </div>
         )}
       </div>
 
-      <div className="px-4 py-4 space-y-3">
+      <div className="px-4 py-6 space-y-4">
         {/* Empty state */}
         {familyMembers.length === 0 && !showForm && (
-          <div className="text-center py-12">
-            <div className="text-5xl mb-3">👨‍👩‍👧</div>
-            <p className="font-poppins font-semibold text-gray-700">No family members yet</p>
-            <p className="text-sm font-inter text-gray-500 mt-1">
-              Add family members to track their voting readiness
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 bg-white rounded-3xl border border-slate-200 border-dashed">
+            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+              <Users className="w-8 h-8 text-slate-300" />
+            </div>
+            <p className="font-poppins font-semibold text-slate-900">No members added</p>
+            <p className="text-xs font-inter text-slate-400 mt-1 px-10 leading-relaxed">
+              Add your family members to ensure everyone is registered and ready for election day.
             </p>
-          </div>
+          </motion.div>
         )}
 
         {/* Family member cards */}
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           {familyMembers.map((member, i) => {
             const cfg = statusConfig(member.status)
             return (
               <motion.div
                 key={member.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ delay: i * 0.06 }}
-                className={`bg-white rounded-2xl border-2 ${cfg.border} p-4 shadow-sm`}
+                layout
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ delay: i * 0.05 }}
+                className={`bg-white rounded-2xl border shadow-sm p-5 transition-all ${
+                  member.status === 'ready' ? 'border-slate-900 ring-1 ring-slate-900/5' : 'border-slate-200'
+                }`}
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-2xl">
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 border ${
+                    member.status === 'ready' ? 'bg-slate-900 border-slate-900 text-white' : 'bg-slate-50 border-slate-100'
+                  }`}>
                     {member.ageGroup === 'youth' ? '👦' : member.ageGroup === 'senior' ? '👴' : '👤'}
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-poppins font-semibold text-gray-800">{member.name}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-inter ${cfg.badge}`}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <span className="text-[15px] font-poppins font-semibold text-slate-900 truncate">{member.name}</span>
+                      <span className={`text-[9px] px-2 py-0.5 rounded-lg font-inter font-bold uppercase tracking-widest border ${cfg.color} ${cfg.border}`}>
                         {cfg.label}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="flex-1 bg-gray-100 rounded-full h-1.5">
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
                         <motion.div
-                          className="h-1.5 rounded-full"
-                          style={{
-                            background: member.status === 'ready' ? '#22C55E' : member.status === 'partial' ? '#F59E0B' : '#EF4444',
-                            width: `${member.readinessScore}%`,
-                          }}
+                          className="h-full bg-slate-900"
                           initial={{ width: 0 }}
                           animate={{ width: `${member.readinessScore}%` }}
-                          transition={{ duration: 0.8 }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
                         />
                       </div>
-                      <span className="text-xs font-inter text-gray-500">{member.readinessScore}%</span>
+                      <span className="text-[10px] font-poppins font-bold text-slate-400">{member.readinessScore}%</span>
                     </div>
+
                     {member.missingStep && (
-                      <p className="text-xs font-inter text-red-500 mt-1">
-                        Needs: {member.missingStep}
-                      </p>
+                      <div className="flex items-center gap-1.5 mt-3">
+                        <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+                        <p className="text-[11px] font-inter text-slate-500 font-medium leading-none">
+                          Missing: <span className="text-slate-900 font-bold">{member.missingStep}</span>
+                        </p>
+                      </div>
                     )}
                   </div>
-                  <div className="flex flex-col gap-1">
+                  
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => removeFamilyMember(member.id)}
+                      className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                     {member.status !== 'ready' && (
                       <button
                         onClick={() => navigate('guided')}
-                        className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-lg font-inter font-medium"
+                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all"
                       >
-                        Help
+                        <ChevronRight className="w-4 h-4" />
                       </button>
                     )}
-                    <button
-                      onClick={() => removeFamilyMember(member.id)}
-                      className="text-xs bg-red-50 text-red-500 p-1 rounded-lg"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -146,48 +171,57 @@ export function FamilyScreen() {
         <AnimatePresence>
           {showForm && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-white rounded-2xl border-2 border-purple-200 p-4 shadow-sm overflow-hidden"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="bg-white rounded-3xl border border-slate-900 shadow-xl p-6 overflow-hidden"
             >
-              <p className="text-sm font-poppins font-semibold text-gray-700 mb-3">Add Family Member</p>
-              <input
-                type="text"
-                placeholder="Name"
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-inter mb-3 focus:outline-none focus:border-purple-400"
-              />
-              <div className="flex gap-2 mb-4">
-                {(['youth', 'adult', 'senior'] as const).map((ag) => (
+              <p className="text-sm font-poppins font-bold text-slate-900 mb-4">New Family Member</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter name..."
+                    value={form.name}
+                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                    className="w-full px-4 py-3.5 rounded-xl border border-slate-200 text-sm font-inter focus:outline-none focus:border-slate-900 transition-all bg-slate-50 shadow-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-2">Voter Category</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['youth', 'adult', 'senior'] as const).map((ag) => (
+                      <button
+                        key={ag}
+                        onClick={() => setForm((f) => ({ ...f, ageGroup: ag }))}
+                        className={`py-3 rounded-xl text-xs font-inter font-bold border transition-all ${
+                          form.ageGroup === ag
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                            : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400'
+                        }`}
+                      >
+                        {ag === 'youth' ? 'Youth' : ag === 'adult' ? 'Adult' : 'Senior'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-2">
                   <button
-                    key={ag}
-                    onClick={() => setForm((f) => ({ ...f, ageGroup: ag }))}
-                    className={`flex-1 py-2 rounded-xl text-xs font-inter font-medium border-2 transition-all ${
-                      form.ageGroup === ag
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
-                        : 'border-gray-200 text-gray-600'
-                    }`}
+                    onClick={handleAdd}
+                    className="flex-1 py-4 rounded-xl text-white text-sm font-poppins font-semibold bg-slate-900 shadow-lg active:scale-[0.98] transition-all"
                   >
-                    {ag === 'youth' ? '👦 Youth' : ag === 'adult' ? '👤 Adult' : '👴 Senior'}
+                    Add Member
                   </button>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={handleAdd}
-                  className="flex-1 py-2.5 rounded-xl text-white text-sm font-poppins font-semibold"
-                  style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%)' }}
-                >
-                  Add Member
-                </button>
-                <button
-                  onClick={() => setShowForm(false)}
-                  className="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-inter"
-                >
-                  Cancel
-                </button>
+                  <button
+                    onClick={() => setShowForm(false)}
+                    className="px-6 py-4 rounded-xl border border-slate-200 text-slate-500 text-sm font-inter font-bold hover:bg-slate-50 transition-all"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
@@ -197,20 +231,20 @@ export function FamilyScreen() {
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="w-full py-3.5 rounded-2xl border-2 border-dashed border-purple-300 flex items-center justify-center gap-2 text-purple-600 font-poppins font-semibold text-sm hover:bg-purple-50 transition-colors"
+            className="w-full py-5 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center gap-2 text-slate-400 font-poppins font-semibold text-sm hover:border-slate-400 hover:text-slate-600 transition-all"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-5 h-5" />
             Add Family Member
           </button>
         )}
 
-        {/* Community link */}
+        {/* Community insight link */}
         <button
           onClick={() => navigate('community')}
-          className="w-full py-3 rounded-2xl bg-purple-50 border border-purple-200 text-purple-700 text-sm font-inter font-medium flex items-center justify-center gap-2"
+          className="w-full py-4 rounded-2xl bg-white border border-slate-200 text-slate-900 text-xs font-inter font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all shadow-sm"
         >
-          <MessageCircle className="w-4 h-4" />
-          View Community Progress →
+          View Community Progress
+          <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>

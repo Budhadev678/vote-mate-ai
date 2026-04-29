@@ -15,131 +15,101 @@ export function LandingScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       <div className="absolute top-4 right-4 z-50">
-        <InfoButton text="VoteMate AI is your ultimate election companion! We use AI to guide you through registration, news verification, and booth finding." />
+        <InfoButton text="VoteMate AI is your secure and private election companion. We guide you through registration, verified news, and finding your booth." />
       </div>
 
-      {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50 -translate-y-32 translate-x-32" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-100 rounded-full blur-3xl opacity-50 translate-y-32 -translate-x-32" />
-
       <motion.div
-        className="max-w-sm w-full text-center space-y-8 relative z-10"
-        initial={{ opacity: 0, y: 30 }}
+        className="max-w-sm w-full text-center space-y-10 relative z-10"
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         {/* Logo / Brand */}
-        <div className="space-y-3">
-          <motion.div
-            className="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-4xl shadow-xl"
-            style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 60%, #22C55E 100%)' }}
-            animate={{ rotate: [0, 3, -3, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        <div className="space-y-4">
+          <div
+            className="w-24 h-24 mx-auto rounded-3xl flex items-center justify-center text-5xl shadow-sm border border-slate-100 bg-white"
           >
-            🗳️
-          </motion.div>
+            🇮🇳
+          </div>
           <div>
-            <h1 className="text-3xl font-poppins font-bold text-gradient">VoteMate AI</h1>
-            <p className="text-sm font-inter text-gray-500 mt-1">Your Personal Election Companion</p>
+            <h1 className="text-3xl font-poppins font-bold text-slate-900 tracking-tight">VoteMate AI</h1>
+            <p className="text-sm font-inter text-slate-500 mt-2">Secure & Verified Election Guide</p>
           </div>
         </div>
 
         {/* AI Greeting */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-3xl p-5 shadow-lg border border-blue-100 text-left"
-        >
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 text-left relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-lg flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xl flex-shrink-0">
               🤖
             </div>
-            <div className="space-y-2">
-              <p className="text-sm font-inter text-gray-800 leading-relaxed">
-                Hi 👋 I'm VoteMate AI — here to guide you through India's election process step by step.
+            <div className="space-y-1">
+              <p className="text-sm font-inter text-slate-700 leading-relaxed font-medium">
+                Hello. I am VoteMate AI.
               </p>
-              <motion.div
-                className="flex gap-1"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-              >
-                <span className="typing-dot" />
-                <span className="typing-dot" />
-                <span className="typing-dot" />
-              </motion.div>
+              <p className="text-sm font-inter text-slate-600 leading-relaxed">
+                I'm here to provide accurate, safe, and unbiased guidance for the Indian elections.
+              </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Feature pills */}
-        <motion.div
-          className="flex flex-wrap gap-2 justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          {['🧠 AI Guided', '📊 Progress Tracker', '📍 Booth Finder', '🛡️ Fact Checker'].map(
+        <div className="flex flex-wrap gap-2 justify-center">
+          {['🔒 Secure', '✓ Verified Info', '📍 Booth Locator', '🧠 AI Assistant'].map(
             (pill) => (
               <span
                 key={pill}
-                className="bg-white text-xs font-inter font-medium text-gray-600 px-3 py-1.5 rounded-full border border-gray-200 shadow-sm"
+                className="bg-white text-xs font-inter font-medium text-slate-600 px-3 py-1.5 rounded-full border border-slate-200 shadow-sm"
               >
                 {pill}
               </span>
             ),
           )}
-        </motion.div>
+        </div>
 
         {/* CTAs */}
-        <motion.div
-          className="space-y-3"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-        >
+        <div className="space-y-3 pt-4">
           <button
             onClick={handleStart}
-            className="w-full py-4 rounded-2xl text-white font-poppins font-semibold text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
-            style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)' }}
+            className="w-full py-4 rounded-xl text-white font-poppins font-medium text-base flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-[0.98] bg-slate-900 hover:bg-slate-800"
           >
-            <Rocket className="w-5 h-5" />
             Start My Journey
+            <ArrowRight className="w-4 h-4" />
           </button>
 
           <button
             onClick={() => navigate('chat')}
-            className="w-full py-3.5 rounded-2xl border-2 border-blue-700 text-blue-700 font-poppins font-semibold text-sm flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors active:scale-95"
+            className="w-full py-4 rounded-xl border border-slate-300 text-slate-700 font-poppins font-medium text-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors active:scale-[0.98] bg-white"
           >
-            <Zap className="w-4 h-4" />
-            Quick Help
+            <Zap className="w-4 h-4 text-amber-500" />
+            Quick AI Help
           </button>
 
           {user.onboardingComplete && (
             <button
               onClick={() => navigate('dashboard')}
-              className="w-full py-3 rounded-2xl text-gray-600 font-inter text-sm flex items-center justify-center gap-1.5 hover:bg-gray-50 transition-colors"
+              className="w-full py-3 rounded-xl text-slate-500 font-inter text-sm flex items-center justify-center gap-1.5 hover:bg-slate-100 transition-colors"
             >
-              <ArrowRight className="w-4 h-4" />
-              Resume My Progress
+              Resume Progress
             </button>
           )}
-        </motion.div>
+        </div>
 
         {/* Language toggle */}
-        <div className="flex items-center justify-center gap-2 text-xs font-inter text-gray-500">
-          <span>Language:</span>
+        <div className="flex items-center justify-center gap-2 text-xs font-inter text-slate-500 pt-4">
+          <span>Language / भाषा:</span>
           {(['en', 'hi'] as const).map((lang) => (
             <button
               key={lang}
               onClick={() => updateUser({ language: lang })}
-              className={`px-2.5 py-1 rounded-lg border font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg border font-medium transition-colors ${
                 user.language === lang
-                  ? 'bg-blue-700 text-white border-blue-700'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-blue-300'
+                  ? 'bg-slate-900 text-white border-slate-900'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
               }`}
             >
               {lang === 'en' ? 'English' : 'हिंदी'}

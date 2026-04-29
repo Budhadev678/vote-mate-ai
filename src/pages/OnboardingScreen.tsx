@@ -74,17 +74,17 @@ export function OnboardingScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col px-6 py-10">
+    <div className="min-h-screen bg-slate-50 flex flex-col px-6 py-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-10">
         <button
           onClick={() => onboardingStep > 0 && setOnboardingStep(onboardingStep - 1)}
-          className={`text-sm font-inter text-gray-400 ${onboardingStep === 0 ? 'invisible' : ''}`}
+          className={`text-sm font-inter font-medium text-slate-500 hover:text-slate-900 transition-colors ${onboardingStep === 0 ? 'invisible' : ''}`}
         >
           ← Back
         </button>
         <div className="flex items-center gap-4">
-          <span className="text-sm font-inter text-gray-500">
+          <span className="text-sm font-inter text-slate-400 font-medium">
             Step {onboardingStep + 1} of {totalSteps}
           </span>
           <InfoButton text="We need these details to personalize your experience. Your data never leaves your device and is only used to compute your readiness score locally!" />
@@ -92,12 +92,12 @@ export function OnboardingScreen() {
       </div>
 
       {/* Step progress dots */}
-      <div className="flex gap-2 mb-8">
+      <div className="flex gap-2 mb-10">
         {STEPS.map((_, i) => (
           <div
             key={i}
-            className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
-              i <= onboardingStep ? 'bg-blue-700' : 'bg-gray-200'
+            className={`h-1 flex-1 rounded-full transition-all duration-700 ${
+              i <= onboardingStep ? 'bg-slate-900' : 'bg-slate-200'
             }`}
           />
         ))}
@@ -111,48 +111,57 @@ export function OnboardingScreen() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="space-y-6 flex-1"
+          className="space-y-8 flex-1"
         >
           {/* AI bubble */}
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-xl flex-shrink-0 shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-xl flex-shrink-0 shadow-sm">
               🤖
             </div>
-            <div className="ai-bubble rounded-2xl rounded-tl-sm px-4 py-3 max-w-xs">
-              <p className="text-sm font-inter text-gray-800">{step.aiMessage}</p>
+            <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-sm px-5 py-4 max-w-xs shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-slate-900"></div>
+              <p className="text-sm font-inter text-slate-700 font-medium leading-relaxed">{step.aiMessage}</p>
             </div>
           </div>
 
           {/* Voter type choice */}
           {step.type === 'choice' && (
-            <div className="flex gap-3 mt-4 pl-13">
+            <div className="flex flex-col gap-3 mt-2 pl-13">
               {[
-                { label: '✋ Yes, first time!', value: 'first-time', color: 'blue' },
-                { label: '🔁 No, voted before', value: 'experienced', color: 'green' },
+                { label: 'Yes, first time!', value: 'first-time', emoji: '✋' },
+                { label: 'No, voted before', value: 'experienced', emoji: '🔁' },
               ].map((opt) => (
-                <ChoiceButton
+                <button
                   key={opt.value}
-                  label={opt.label}
-                  selected={selections['voterType'] === opt.value}
                   onClick={() => handleSelect('voterType', opt.value)}
-                  color={opt.color}
-                />
+                  className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
+                    selections['voterType'] === opt.value
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  <span className="text-lg">{opt.emoji}</span>
+                  <span className="text-sm font-poppins font-medium">{opt.label}</span>
+                  {selections['voterType'] === opt.value && <Check className="w-4 h-4 text-white ml-auto" />}
+                </button>
               ))}
             </div>
           )}
 
           {/* State dropdown */}
           {step.type === 'dropdown' && (
-            <div className="space-y-3">
-              <input
-                type="text"
-                placeholder="Search your state..."
-                value={stateInput}
-                onChange={(e) => handleStateFilter(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm font-inter focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 shadow-sm"
-              />
+            <div className="space-y-4 pl-13">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search state..."
+                  value={stateInput}
+                  onChange={(e) => handleStateFilter(e.target.value)}
+                  className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white text-sm font-inter focus:outline-none focus:border-slate-400 shadow-sm transition-all"
+                />
+              </div>
               {filteredStates.length > 0 && (
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden max-h-52 overflow-y-auto">
+                <div className="bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden max-h-52 overflow-y-auto">
                   {filteredStates.map((state) => (
                     <button
                       key={state}
@@ -161,34 +170,32 @@ export function OnboardingScreen() {
                         setFilteredStates([])
                         handleSelect('state', state)
                       }}
-                      className="w-full text-left px-4 py-2.5 text-sm font-inter text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center justify-between"
+                      className="w-full text-left px-4 py-3 text-sm font-inter text-slate-700 hover:bg-slate-50 transition-colors flex items-center justify-between"
                     >
                       {state}
-                      {selections['state'] === state && <Check className="w-4 h-4 text-blue-600" />}
+                      {selections['state'] === state && <Check className="w-4 h-4 text-slate-900" />}
                     </button>
                   ))}
                 </div>
               )}
-              {selections['state'] && (
-                <div className="flex items-center gap-2 text-sm font-inter text-green-600">
-                  <Check className="w-4 h-4" />
-                  <span>Selected: {selections['state']}</span>
-                </div>
-              )}
+              
               {/* Popular states quick select */}
               {!stateInput && (
-                <div className="flex flex-wrap gap-2">
-                  {['Maharashtra', 'Delhi', 'Uttar Pradesh', 'West Bengal', 'Tamil Nadu'].map(
-                    (s) => (
-                      <button
-                        key={s}
-                        onClick={() => handleSelect('state', s)}
-                        className="px-3 py-1.5 bg-white border border-gray-200 rounded-xl text-xs font-inter text-gray-600 hover:border-blue-400 hover:text-blue-700 transition-colors shadow-sm"
-                      >
-                        {s}
-                      </button>
-                    ),
-                  )}
+                <div className="space-y-2">
+                  <p className="text-[10px] font-inter font-semibold text-slate-400 uppercase tracking-widest">Popular States</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['Maharashtra', 'Delhi', 'Uttar Pradesh', 'West Bengal', 'Tamil Nadu'].map(
+                      (s) => (
+                        <button
+                          key={s}
+                          onClick={() => handleSelect('state', s)}
+                          className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-inter font-medium text-slate-600 hover:border-slate-400 transition-colors shadow-sm"
+                        >
+                          {s}
+                        </button>
+                      ),
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -196,48 +203,47 @@ export function OnboardingScreen() {
 
           {/* Mode selection */}
           {step.type === 'mode' && (
-            <div className="space-y-3">
+            <div className="space-y-3 pl-13">
               {[
                 {
                   value: 'chat',
                   icon: '💬',
-                  title: 'Chat Mode',
-                  desc: 'Ask me anything naturally',
-                  color: 'blue',
+                  title: 'Assistant Chat',
+                  desc: 'Ask questions naturally',
                 },
                 {
                   value: 'guided',
                   icon: '🧭',
-                  title: 'Guided Mode',
-                  desc: 'Step-by-step structured flow',
-                  color: 'green',
+                  title: 'Guided Path',
+                  desc: 'Step-by-step procedure',
                 },
                 {
                   value: 'quick',
                   icon: '⚡',
-                  title: 'Quick Mode',
-                  desc: 'Essentials only, fast & simple',
-                  color: 'amber',
+                  title: 'Quick Access',
+                  desc: 'Essentials only, fast',
                 },
               ].map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => handleSelect('preferredMode', opt.value)}
-                  className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 bg-white transition-all active:scale-98 ${
+                  className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
                     selections['preferredMode'] === opt.value
-                      ? 'border-blue-600 bg-blue-50 shadow-md'
-                      : 'border-gray-200 hover:border-blue-300'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-md'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                   }`}
                 >
-                  <span className="text-2xl">{opt.icon}</span>
-                  <div className="text-left">
-                    <div className="text-sm font-poppins font-semibold text-gray-800">
+                  <span className="text-xl">{opt.icon}</span>
+                  <div className="text-left flex-1">
+                    <div className={`text-sm font-poppins font-medium ${selections['preferredMode'] === opt.value ? 'text-white' : 'text-slate-900'}`}>
                       {opt.title}
                     </div>
-                    <div className="text-xs font-inter text-gray-500">{opt.desc}</div>
+                    <div className={`text-xs font-inter ${selections['preferredMode'] === opt.value ? 'text-slate-300' : 'text-slate-500'}`}>
+                      {opt.desc}
+                    </div>
                   </div>
                   {selections['preferredMode'] === opt.value && (
-                    <Check className="w-5 h-5 text-blue-600 ml-auto" />
+                    <Check className="w-5 h-5 text-white" />
                   )}
                 </button>
               ))}

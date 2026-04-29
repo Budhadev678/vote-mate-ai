@@ -132,42 +132,36 @@ export function ChatScreen() {
   }
 
   return (
-    <div className="flex flex-col flex-1 bg-gray-50 h-full overflow-hidden absolute inset-0">
+    <div className="flex flex-col flex-1 bg-slate-50 h-full overflow-hidden absolute inset-0">
       {/* Header */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 shadow-sm relative"
-        style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #2D5BE3 100%)' }}
-      >
-        <button onClick={goBack} className="text-white/80 hover:text-white transition-colors">
+      <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-200 shadow-sm z-10">
+        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-lg">
+        <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-lg border border-slate-200">
           🤖
         </div>
-        <div className="flex-1 flex items-center gap-2">
-          <div>
-            <p className="text-white font-poppins font-bold text-sm">VoteMate AI</p>
-            <p className="text-blue-200 text-xs font-inter">
-              {isAiTyping ? 'Thinking...' : 'Always here to help'}
-            </p>
-          </div>
-          <InfoButton text="Speak or type to me! I'm fully context-aware and know your state and voting status. Use the 'Simplify' button if answers are too complex." />
+        <div className="flex-1">
+          <p className="text-slate-900 font-poppins font-semibold text-sm">VoteMate AI</p>
+          <p className="text-slate-500 text-[10px] font-inter uppercase tracking-wider font-medium">
+            {isAiTyping ? 'Thinking...' : 'Official Assistant'}
+          </p>
         </div>
-        <div className="flex gap-2">
-          {/* Confusion mode toggle */}
+        <div className="flex items-center gap-2">
+          <InfoButton text="I can help with registration, polling booths, and election procedures. Ask me anything!" />
           <button
             onClick={() => setConfusionMode(!confusionMode)}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-inter font-medium transition-colors ${
-              confusionMode ? 'bg-amber-400 text-amber-900' : 'bg-white/20 text-white'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-inter font-medium transition-all border ${
+              confusionMode 
+                ? 'bg-slate-900 text-white border-slate-900' 
+                : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
             }`}
-            title="Confusion mode — simpler answers"
           >
-            <HelpCircle className="w-3.5 h-3.5" />
-            {confusionMode ? 'Simple' : 'Simplify?'}
+            {confusionMode ? 'Simple Mode' : 'Simplify?'}
           </button>
           <button
             onClick={clearChat}
-            className="text-white/60 hover:text-white transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
             title="Clear chat"
           >
             <RotateCcw className="w-4 h-4" />
@@ -190,22 +184,22 @@ export function ChatScreen() {
             >
               {/* Avatar */}
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm ${
+                className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm border ${
                   msg.role === 'assistant'
-                    ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white'
-                    : 'bg-green-500 text-white'
+                    ? 'bg-slate-900 border-slate-900'
+                    : 'bg-white border-slate-200 text-slate-600'
                 }`}
               >
                 {msg.role === 'assistant' ? '🤖' : '👤'}
               </div>
 
               {/* Bubble */}
-              <div className={`max-w-[80%] space-y-2 ${msg.role === 'user' ? 'items-end flex flex-col' : ''}`}>
+              <div className={`max-w-[85%] space-y-2 ${msg.role === 'user' ? 'items-end flex flex-col' : ''}`}>
                 <div
-                  className={`px-4 py-3 rounded-2xl text-sm font-inter leading-relaxed ${
+                  className={`px-4 py-3 rounded-2xl text-[14px] font-inter leading-relaxed shadow-sm border ${
                     msg.role === 'assistant'
-                      ? 'ai-bubble rounded-tl-sm'
-                      : 'user-bubble rounded-tr-sm'
+                      ? 'bg-white border-slate-200 text-slate-800 rounded-tl-sm'
+                      : 'bg-slate-900 text-white border-slate-900 rounded-tr-sm'
                   }`}
                 >
                   {msg.role === 'assistant' ? (
@@ -291,8 +285,8 @@ export function ChatScreen() {
       </div>
 
       {/* Input bar */}
-      <div className="px-4 py-3 bg-white border-t border-gray-200 flex items-center gap-2 safe-bottom">
-        <div className="flex-1 flex items-center bg-gray-100 rounded-2xl px-4 py-2.5 gap-2">
+      <div className="px-4 py-4 bg-white border-t border-slate-200 flex items-center gap-3 pb-safe-offset-4">
+        <div className="flex-1 flex items-center bg-slate-100 rounded-2xl px-4 py-3 border border-slate-200/50">
           <input
             ref={inputRef}
             type="text"
@@ -301,32 +295,30 @@ export function ChatScreen() {
             onKeyDown={(e) => e.key === 'Enter' && sendMessage(input)}
             placeholder={
               user.language === 'hi'
-                ? 'यहाँ पूछें...'
-                : confusionMode
-                  ? 'Ask in simple words...'
-                  : 'Ask anything about voting...'
+                ? 'सवाल पूछें...'
+                : 'Ask me anything...'
             }
-            className="flex-1 bg-transparent text-sm font-inter text-gray-800 placeholder-gray-400 focus:outline-none"
+            className="flex-1 bg-transparent text-sm font-inter text-slate-800 placeholder-slate-400 focus:outline-none"
           />
         </div>
 
         {/* Voice button */}
         <button
           onClick={handleVoice}
-          className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all ${
+          className={`w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all border ${
             isListening
-              ? 'bg-red-500 text-white animate-pulse'
-              : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+              ? 'bg-rose-500 text-white border-rose-500 animate-pulse'
+              : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-800'
           }`}
         >
           {isListening ? (
-            <div className="flex gap-0.5 items-end h-5">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="voice-bar" style={{ height: `${4 + Math.random() * 16}px` }} />
+            <div className="flex gap-0.5 items-end h-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="w-1 bg-white rounded-full animate-voice-wave" style={{ height: `${4 + Math.random() * 12}px` }} />
               ))}
             </div>
           ) : (
-            <Mic className="w-4 h-4" />
+            <Mic className="w-5 h-5" />
           )}
         </button>
 
@@ -334,8 +326,7 @@ export function ChatScreen() {
         <button
           onClick={() => sendMessage(input)}
           disabled={!input.trim() || isAiTyping}
-          className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all disabled:opacity-40"
-          style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)' }}
+          className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 transition-all bg-slate-900 disabled:opacity-30 active:scale-[0.95]"
         >
           <Send className="w-4 h-4 text-white" />
         </button>

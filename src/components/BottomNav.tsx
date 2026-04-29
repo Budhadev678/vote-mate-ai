@@ -24,8 +24,8 @@ export function BottomNav() {
   if (HIDE_ON.includes(currentScreen)) return null
 
   return (
-    <nav className="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 z-40 glass border-t border-gray-200 safe-bottom">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav className="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 z-40 bg-white border-t border-slate-200 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+      <div className="flex items-center justify-around px-3 py-3">
         {NAV_ITEMS.map((item) => {
           const active = currentScreen === item.screen
           const Icon = item.icon
@@ -33,23 +33,18 @@ export function BottomNav() {
             <button
               key={item.screen}
               onClick={() => navigate(item.screen)}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${
-                active
-                  ? 'text-blue-700 bg-blue-50'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
+              className="flex flex-col items-center gap-1.5 px-3 py-1.5 transition-all group"
             >
-              <Icon className={`w-5 h-5 ${active ? 'text-blue-700' : ''}`} />
+              <div className={`p-1 rounded-lg transition-all ${active ? 'bg-slate-100' : 'group-hover:bg-slate-50'}`}>
+                <Icon className={`w-5 h-5 transition-colors ${active ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'}`} />
+              </div>
               <span
-                className={`text-[10px] font-medium font-inter ${
-                  active ? 'text-blue-700' : 'text-gray-500'
+                className={`text-[9px] font-inter font-bold uppercase tracking-wider transition-colors ${
+                  active ? 'text-slate-900' : 'text-slate-400 group-hover:text-slate-600'
                 }`}
               >
                 {item.label}
               </span>
-              {active && (
-                <span className="w-1 h-1 rounded-full bg-blue-600" />
-              )}
             </button>
           )
         })}

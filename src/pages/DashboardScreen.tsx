@@ -45,43 +45,38 @@ export function DashboardScreen() {
   const voterLabel = user.voterType === 'first-time' ? 'First-Time Voter' : 'Voter'
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-slate-50 pb-28">
       {/* Alerts */}
       <AlertBanner />
 
       {/* Header */}
-      <div
-        className="px-5 pt-8 pb-10 relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #2D5BE3 100%)' }}
-      >
-        <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -translate-y-24 translate-x-24" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-16 -translate-x-16" />
-
-        <div className="flex items-start justify-between relative z-10">
+      <div className="px-5 pt-8 pb-6 bg-white border-b border-slate-200">
+        <div className="flex items-start justify-between">
           <div>
-            <p className="text-blue-200 text-xs font-inter mb-1">👋 Welcome back</p>
-            <h1 className="text-xl font-poppins font-bold text-white leading-tight">
+            <p className="text-slate-500 text-xs font-inter mb-1">Welcome</p>
+            <h1 className="text-2xl font-poppins font-semibold text-slate-900 leading-tight">
               {user.name || voterLabel}
             </h1>
             {user.state && (
-              <div className="flex items-center gap-1 mt-1">
-                <MapPin className="w-3 h-3 text-blue-300" />
-                <span className="text-blue-200 text-xs font-inter">{user.state}</span>
+              <div className="flex items-center gap-1 mt-1.5">
+                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-slate-600 text-sm font-inter">{user.state}</span>
               </div>
             )}
           </div>
 
           <div className="relative">
-            <ReadinessRing score={user.readinessScore} size={80} label="Readiness" />
-            <div className="absolute -top-2 -right-2">
+            {/* Sync check: v2 */}
+            <ReadinessRing score={user.readinessScore} size={64} label="Readiness" />
+            <div className="absolute -top-1 -right-1">
               <InfoButton text="Your Readiness Score is calculated based on Registration, Verification, ID check, and finding your Booth. Keep completing steps to hit 100%!" />
             </div>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="mt-5 bg-white/10 rounded-2xl p-4 relative z-10">
-          <p className="text-blue-100 text-xs font-inter mb-3 font-medium">📊 Your Journey</p>
+        <div className="mt-6 pt-5 border-t border-slate-100">
+          <p className="text-slate-500 text-xs font-inter mb-3 font-medium uppercase tracking-wider">Your Progress</p>
           <ProgressBar
             steps={JOURNEY_STEPS}
             current={user.currentStep}
@@ -90,26 +85,26 @@ export function DashboardScreen() {
         </div>
       </div>
 
-      <div className="px-4 -mt-4 space-y-4">
+      <div className="px-4 mt-6 space-y-4">
         {/* 🔥 Next Action Card */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className={`bg-gradient-to-r ${nextActionColors[nextAction.color]} rounded-2xl p-5 shadow-xl`}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/80 text-xs font-inter mb-1 font-medium">🔥 Next Action</p>
-              <p className="text-white font-poppins font-bold text-base leading-tight">
+              <p className="text-slate-500 text-xs font-inter mb-1 font-medium uppercase tracking-wider">Next Step</p>
+              <p className="text-slate-900 font-poppins font-medium text-base">
                 {nextAction.label}
               </p>
             </div>
             <button
               onClick={() => navigate(nextAction.screen)}
-              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-poppins font-semibold transition-colors flex-shrink-0 flex items-center gap-1"
+              className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-poppins font-medium transition-colors flex-shrink-0 flex items-center gap-1 active:scale-95"
             >
-              Start <ChevronRight className="w-4 h-4" />
+              Continue
             </button>
           </div>
         </motion.div>
@@ -118,30 +113,30 @@ export function DashboardScreen() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-2xl p-4 shadow-sm border border-slate-200"
         >
-          <p className="text-xs font-poppins font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            ⚡ Quick Access
+          <p className="text-xs font-inter font-medium text-slate-500 uppercase tracking-wider mb-4">
+            Quick Tools
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             {[
-              { icon: MessageCircle, label: 'Ask AI', screen: 'chat' as const, color: 'bg-blue-50 text-blue-700' },
-              { icon: FileText, label: 'Guided', screen: 'guided' as const, color: 'bg-green-50 text-green-700' },
-              { icon: Zap, label: '1-Min', screen: 'quick' as const, color: 'bg-amber-50 text-amber-700' },
-              { icon: MapPin, label: 'Booth', screen: 'polling' as const, color: 'bg-purple-50 text-purple-700' },
-              { icon: CheckCircle2, label: 'Docs', screen: 'documents' as const, color: 'bg-teal-50 text-teal-700' },
-              { icon: AlertCircle, label: 'Candidates', screen: 'candidates' as const, color: 'bg-indigo-50 text-indigo-700' },
+              { icon: MessageCircle, label: 'Ask AI', screen: 'chat' as const },
+              { icon: FileText, label: 'Guided', screen: 'guided' as const },
+              { icon: Zap, label: 'Quick', screen: 'quick' as const },
+              { icon: MapPin, label: 'Booth', screen: 'polling' as const },
+              { icon: CheckCircle2, label: 'Docs', screen: 'documents' as const },
+              { icon: AlertCircle, label: 'Candidates', screen: 'candidates' as const },
             ].map((item) => {
               const Icon = item.icon
               return (
                 <button
                   key={item.screen}
                   onClick={() => navigate(item.screen)}
-                  className={`${item.color} rounded-xl p-3 flex flex-col items-center gap-1.5 hover:opacity-80 transition-opacity active:scale-95 transition-transform`}
+                  className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col items-center gap-2 hover:bg-slate-100 transition-colors active:scale-[0.98]"
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-xs font-inter font-medium">{item.label}</span>
+                  <Icon className="w-5 h-5 text-slate-700" />
+                  <span className="text-xs font-inter font-medium text-slate-600">{item.label}</span>
                 </button>
               )
             })}
@@ -152,12 +147,12 @@ export function DashboardScreen() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ duration: 0.3 }}
         >
-          <p className="text-xs font-poppins font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            📚 Learn Fast
+          <p className="text-xs font-inter font-medium text-slate-500 uppercase tracking-wider mb-3">
+            Learn More
           </p>
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
             {QUICK_CARDS.map((card) => (
               <div key={card.title} className="flex-shrink-0">
                 <KnowledgeCard card={card} />
@@ -170,49 +165,51 @@ export function DashboardScreen() {
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          transition={{ duration: 0.3 }}
           onClick={() => {
             setConfusionMode(true)
             navigate('chat')
           }}
-          className="w-full py-4 rounded-2xl bg-white border-2 border-dashed border-gray-300 flex items-center justify-center gap-2 text-gray-600 hover:border-blue-400 hover:text-blue-700 transition-all active:scale-95"
+          className="w-full py-4 rounded-xl bg-white border border-slate-300 flex items-center justify-center gap-2 text-slate-700 hover:bg-slate-50 transition-all active:scale-[0.98]"
         >
-          <HelpCircle className="w-5 h-5" />
-          <span className="font-poppins font-medium text-sm">😕 I'm Confused — Simplify Everything</span>
+          <HelpCircle className="w-5 h-5 text-slate-500" />
+          <span className="font-poppins font-medium text-sm">Need help? Ask AI</span>
         </motion.button>
 
         {/* Voting Day prediction CTA */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45 }}
+          transition={{ duration: 0.3 }}
           onClick={() => navigate('crowd')}
-          className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex items-center gap-4 cursor-pointer hover:border-blue-200 transition-colors active:scale-95"
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors active:scale-[0.98]"
         >
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-2xl flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
             🔮
           </div>
           <div className="flex-1">
-            <p className="text-sm font-poppins font-semibold text-gray-800">Crowd Prediction</p>
-            <p className="text-xs font-inter text-gray-500">Best time to vote with short queues</p>
+            <p className="text-sm font-poppins font-medium text-slate-900">Crowd Prediction</p>
+            <p className="text-xs font-inter text-slate-500">Best time to vote with short queues</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-gray-400" />
+          <ChevronRight className="w-4 h-4 text-slate-400" />
         </motion.div>
 
         {/* Community insight teaser */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ duration: 0.3 }}
           onClick={() => navigate('community')}
-          className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-4 border border-purple-100 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform"
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors active:scale-[0.98]"
         >
-          <span className="text-2xl">📊</span>
-          <div className="flex-1">
-            <p className="text-sm font-poppins font-semibold text-purple-800">Community Progress</p>
-            <p className="text-xs font-inter text-purple-600">See how your area is preparing</p>
+          <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
+            📊
           </div>
-          <ChevronRight className="w-4 h-4 text-purple-400" />
+          <div className="flex-1">
+            <p className="text-sm font-poppins font-medium text-slate-900">Community Progress</p>
+            <p className="text-xs font-inter text-slate-500">See how your area is preparing</p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-slate-400" />
         </motion.div>
       </div>
     </div>

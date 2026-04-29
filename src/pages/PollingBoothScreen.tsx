@@ -44,18 +44,15 @@ export function PollingBoothScreen() {
   const currentSlotIdx = nowHour < 8 ? 0 : nowHour < 10 ? 1 : nowHour < 12 ? 2 : nowHour < 14 ? 3 : nowHour < 16 ? 4 : 5
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-slate-50 pb-28">
       {/* Header */}
-      <div
-        className="px-5 pt-8 pb-6"
-        style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%)' }}
-      >
-        <button onClick={goBack} className="text-white/80 mb-3 flex items-center gap-1 text-sm font-inter">
+      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
+        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-xl font-poppins font-bold text-white">📍 Find Your Booth</h1>
-        <p className="text-blue-200 text-sm font-inter mt-1">
-          Locate your assigned polling station
+        <h1 className="text-xl font-poppins font-semibold text-slate-900">Find Your Booth</h1>
+        <p className="text-slate-500 text-xs font-inter mt-1.5 font-medium">
+          Locate your assigned official polling station
         </p>
       </div>
 
@@ -65,10 +62,10 @@ export function PollingBoothScreen() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+            className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"
           >
-            <p className="text-sm font-poppins font-semibold text-gray-700 mb-3">
-              Enter PIN code to find booth
+            <p className="text-sm font-inter font-semibold text-slate-800 mb-4">
+              Enter Pincode
             </p>
             <div className="flex gap-2">
               <input
@@ -77,13 +74,12 @@ export function PollingBoothScreen() {
                 value={pinCode}
                 onChange={(e) => setPinCode(e.target.value.slice(0, 6))}
                 maxLength={6}
-                className="flex-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm font-inter focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="flex-1 px-4 py-3 rounded-xl border border-slate-200 text-sm font-inter focus:outline-none focus:border-slate-400 shadow-sm transition-all"
               />
               <button
                 onClick={handleFindBooth}
                 disabled={loading}
-                className="px-4 py-2.5 rounded-xl text-white text-sm font-poppins font-semibold flex items-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)' }}
+                className="px-6 py-3 rounded-xl text-white text-sm font-poppins font-medium bg-slate-900 disabled:opacity-30 active:scale-[0.98] transition-all"
               >
                 {loading ? (
                   <motion.div
@@ -92,15 +88,15 @@ export function PollingBoothScreen() {
                     className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                   />
                 ) : (
-                  '🔍 Find'
+                  'Find'
                 )}
               </button>
             </div>
             <button
               onClick={handleFindBooth}
-              className="mt-2 text-xs font-inter text-blue-600 underline"
+              className="mt-4 text-xs font-inter font-bold text-slate-500 hover:text-slate-800 transition-colors"
             >
-              Use my location instead →
+              Or use current location →
             </button>
           </motion.div>
         )}
@@ -112,30 +108,29 @@ export function PollingBoothScreen() {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
           >
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex items-start justify-between mb-5">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">📍</span>
-                  <span className="text-xs font-inter font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
-                    ✓ Verified Booth
+                  <span className="text-xs font-inter font-bold text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 uppercase tracking-widest">
+                    Official Station
                   </span>
                 </div>
-                <h2 className="text-base font-poppins font-bold text-gray-800 mt-2">
+                <h2 className="text-base font-poppins font-semibold text-slate-900 mt-3">
                   {MOCK_BOOTH.name}
                 </h2>
-                <p className="text-sm font-inter text-gray-500">{MOCK_BOOTH.address}</p>
+                <p className="text-sm font-inter text-slate-500 leading-relaxed">{MOCK_BOOTH.address}</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="grid grid-cols-3 gap-3 mb-6">
               {[
-                { label: 'Booth No.', value: MOCK_BOOTH.boothNumber },
+                { label: 'Booth', value: MOCK_BOOTH.boothNumber },
                 { label: 'Distance', value: MOCK_BOOTH.distance },
-                { label: 'ETA', value: MOCK_BOOTH.eta },
+                { label: 'Wait', value: MOCK_BOOTH.eta },
               ].map((item) => (
-                <div key={item.label} className="bg-blue-50 rounded-xl p-2.5 text-center">
-                  <p className="text-xs font-inter text-blue-500">{item.label}</p>
-                  <p className="text-sm font-poppins font-bold text-blue-800">{item.value}</p>
+                <div key={item.label} className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-center">
+                  <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-1">{item.label}</p>
+                  <p className="text-sm font-poppins font-semibold text-slate-900">{item.value}</p>
                 </div>
               ))}
             </div>
@@ -163,16 +158,15 @@ export function PollingBoothScreen() {
             </div>
 
             {/* Action buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={() => window.open('https://maps.google.com', '_blank')}
-                className="flex-1 py-2.5 rounded-xl text-white text-sm font-poppins font-semibold flex items-center justify-center gap-1.5"
-                style={{ background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)' }}
+                className="flex-1 py-3.5 rounded-xl text-white text-sm font-poppins font-semibold flex items-center justify-center gap-2 bg-slate-900 active:scale-[0.98] transition-all"
               >
                 <Navigation className="w-4 h-4" />
                 Navigate
               </button>
-              <button className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-inter font-medium hover:bg-gray-50">
+              <button className="flex items-center gap-2 px-5 py-3.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-inter font-semibold hover:bg-slate-50 transition-colors">
                 <Share2 className="w-4 h-4" />
                 Share
               </button>
@@ -185,12 +179,12 @@ export function PollingBoothScreen() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+          className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-4 h-4 text-indigo-500" />
-            <span className="text-xs font-poppins font-semibold text-gray-500 uppercase tracking-wide">
-              Crowd Prediction Today
+          <div className="flex items-center gap-2 mb-6">
+            <Clock className="w-4 h-4 text-slate-400" />
+            <span className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest">
+              Crowd Forecast
             </span>
           </div>
 
@@ -229,28 +223,29 @@ export function PollingBoothScreen() {
                       Busy
                     </span>
                   )}
+                  <span className="text-[10px] font-inter text-slate-400 w-12 text-right">{slot.wait}</span>
                 </div>
               )
             })}
           </div>
 
-          <div className="mt-3 bg-green-50 rounded-xl px-3 py-2 border border-green-100">
-            <p className="text-xs font-inter text-green-800">
-              🟢 <strong>Best time to vote:</strong> 8–10 AM — lowest crowd, ~8 min wait
+          <div className="mt-5 bg-slate-50 rounded-xl px-4 py-3 border border-slate-100">
+            <p className="text-xs font-inter text-slate-700 leading-relaxed">
+              <span className="font-bold">Recommended:</span> 8–10 AM is the optimal window with minimal wait times.
             </p>
           </div>
         </motion.div>
 
         {/* Official sources */}
-        <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
-          <p className="text-xs font-poppins font-semibold text-blue-700 mb-2">
-            🏛️ Official Sources
+        <div className="bg-slate-900 rounded-2xl p-5 text-white shadow-lg">
+          <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-3">
+            ECI Verification
           </p>
-          <p className="text-xs font-inter text-blue-800 mb-1">
-            Find booth officially at: <span className="font-semibold">voters.eci.gov.in</span>
+          <p className="text-sm font-poppins font-medium mb-1">
+            voters.eci.gov.in
           </p>
-          <p className="text-xs font-inter text-blue-600">
-            ✅ Verified from Election Commission of India
+          <p className="text-xs font-inter text-slate-400 leading-relaxed">
+            Data verified from the Election Commission of India. Always carry a valid ID.
           </p>
         </div>
       </div>

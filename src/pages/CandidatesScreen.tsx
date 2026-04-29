@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { ArrowLeft, GraduationCap, Briefcase, AlertOctagon } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
 const MOCK_CANDIDATES = [
@@ -12,43 +12,58 @@ export function CandidatesScreen() {
   const { goBack } = useStore()
   
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
-      <div className="px-5 pt-8 pb-6" style={{ background: 'linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)' }}>
-        <button onClick={goBack} className="text-white/80 mb-3 flex items-center gap-1 text-sm font-inter">
+    <div className="min-h-screen bg-slate-50 pb-28">
+      {/* Header */}
+      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
+        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-xl font-poppins font-bold text-white">⚖️ Know Your Candidates</h1>
-        <p className="text-blue-100 text-sm font-inter mt-1">Based on official EC affidavits</p>
+        <h1 className="text-xl font-poppins font-semibold text-slate-900">Know Your Candidates</h1>
+        <p className="text-slate-500 text-xs font-inter mt-1.5 font-medium">
+          Verified profiles based on official ECI affidavits
+        </p>
       </div>
 
-      <div className="px-4 py-4 space-y-4">
+      <div className="px-4 py-4 space-y-6">
         {MOCK_CANDIDATES.map((c, i) => (
-          <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-4 border-b border-gray-50 flex items-center justify-between bg-blue-50/50">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-2xl border border-gray-100">
+          <motion.div 
+            key={c.id} 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: i * 0.1 }} 
+            className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+          >
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-slate-50 rounded-xl flex items-center justify-center text-2xl border border-slate-100">
                   {c.symbol}
                 </div>
                 <div>
-                  <h2 className="text-base font-poppins font-bold text-gray-900">{c.name}</h2>
-                  <p className="text-xs font-inter text-gray-600">{c.party} · Age {c.age}</p>
+                  <h2 className="text-base font-poppins font-semibold text-slate-900">{c.name}</h2>
+                  <p className="text-xs font-inter text-slate-500 font-medium">{c.party} · Age {c.age}</p>
                 </div>
               </div>
             </div>
             
-            <div className="p-4 grid grid-cols-2 gap-4">
+            <div className="p-5 grid grid-cols-2 gap-6">
               <div>
-                <p className="text-[10px] font-poppins font-semibold text-gray-500 uppercase flex items-center gap-1"><GraduationCap className="w-3 h-3"/> Education</p>
-                <p className="text-sm font-inter text-gray-800 font-medium">{c.edu}</p>
+                <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-2">
+                  <GraduationCap className="w-3.5 h-3.5"/> Education
+                </p>
+                <p className="text-sm font-inter text-slate-800 font-semibold">{c.edu}</p>
               </div>
               <div>
-                <p className="text-[10px] font-poppins font-semibold text-gray-500 uppercase flex items-center gap-1"><Briefcase className="w-3 h-3"/> Declared Assets</p>
-                <p className="text-sm font-inter text-gray-800 font-medium">{c.assets}</p>
+                <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-2">
+                  <Briefcase className="w-3.5 h-3.5"/> Assets
+                </p>
+                <p className="text-sm font-inter text-slate-800 font-semibold">{c.assets}</p>
               </div>
-              <div className="col-span-2 bg-gray-50 p-3 rounded-xl flex items-center justify-between">
-                <p className="text-[10px] font-poppins font-semibold text-gray-500 uppercase flex items-center gap-1"><AlertOctagon className="w-3 h-3"/> Criminal Cases</p>
-                <span className={`px-2 py-1 rounded-md text-xs font-bold ${c.cases === 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {c.cases === 0 ? 'Clean Record' : `${c.cases} Pending Cases`}
+              <div className="col-span-2 bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-100">
+                <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <AlertOctagon className="w-3.5 h-3.5"/> Criminal Cases
+                </p>
+                <span className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest ${c.cases === 0 ? 'bg-white text-emerald-600 border border-emerald-100 shadow-sm' : 'bg-white text-rose-600 border border-rose-100 shadow-sm'}`}>
+                  {c.cases === 0 ? 'Clean Record' : `${c.cases} Pending`}
                 </span>
               </div>
             </div>

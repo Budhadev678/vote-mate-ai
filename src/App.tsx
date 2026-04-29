@@ -34,10 +34,10 @@ function PageTransition({ children, screenKey }: { children: React.ReactNode; sc
     <AnimatePresence mode="wait">
       <motion.div
         key={screenKey}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.22, ease: 'easeOut' }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.15 }}
         className="flex-1 flex flex-col"
       >
         {children}
@@ -120,8 +120,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center">
-      <div className="w-full max-w-md bg-white min-h-screen flex flex-col relative shadow-2xl border-x border-gray-200 overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex justify-center items-center p-0 sm:p-4 md:p-8">
+      <div className="w-full max-w-md bg-white h-[100dvh] sm:h-[90vh] sm:rounded-[2.5rem] flex flex-col relative shadow-2xl border border-slate-200 overflow-hidden ring-1 ring-slate-900/5">
       {/* Offline banner */}
       <OfflineBanner />
 
@@ -150,12 +150,10 @@ function OfflineBanner() {
           initial={{ height: 0 }}
           animate={{ height: 'auto' }}
           exit={{ height: 0 }}
-          className="overflow-hidden"
+          className="bg-slate-900 text-white text-[10px] font-inter font-bold uppercase tracking-[0.2em] py-2.5 px-4 flex items-center justify-center gap-3 border-b border-slate-800"
         >
-          <div className="bg-gray-800 text-white text-xs font-inter py-2 px-4 flex items-center justify-center gap-2 text-center">
-            <span>📶</span>
-            <span>You're offline — AI chat and live features unavailable</span>
-          </div>
+          <span className="w-2 h-2 rounded-full bg-slate-500 animate-pulse" />
+          <span>Offline Mode — Features Limited</span>
         </motion.div>
       )}
     </AnimatePresence>

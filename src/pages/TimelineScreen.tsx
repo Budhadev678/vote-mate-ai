@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowLeft, Search, Filter } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ArrowLeft, Calendar, ChevronRight, MessageSquare } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { phases } from '../data/phases'
 
@@ -9,115 +9,106 @@ export function TimelineScreen() {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(4) // current phase
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-28">
+    <div className="min-h-screen bg-slate-50 pb-28">
       {/* Header */}
-      <div
-        className="px-5 pt-8 pb-6"
-        style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%)' }}
-      >
-        <button onClick={goBack} className="text-white/80 mb-3 flex items-center gap-1 text-sm font-inter">
+      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
+        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-xl font-poppins font-bold text-white">📅 Election Timeline</h1>
-        <p className="text-purple-200 text-sm font-inter mt-1">
-          All 6 phases of India's election process
-        </p>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-sm">
+            <Calendar className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-poppins font-semibold text-slate-900">Election Timeline</h1>
+            <p className="text-slate-500 text-xs font-inter mt-1 font-medium">Phases and key dates for India 2024</p>
+          </div>
+        </div>
       </div>
 
-      <div className="px-4 py-4 space-y-3">
+      <div className="px-4 py-6 space-y-4">
         {phases.map((phase, idx) => {
           const isOpen = expandedPhase === idx
-          const statusStyle =
-            phase.status === 'done'
-              ? 'border-green-200 bg-green-50'
-              : phase.status === 'active'
-                ? 'border-blue-300 bg-blue-50 ring-1 ring-blue-200'
-                : 'border-gray-200 bg-white'
+          const isActive = phase.status === 'active'
+          const isDone = phase.status === 'done'
 
           return (
             <motion.div
               key={phase.num}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.06 }}
-              className={`rounded-2xl border-2 shadow-sm overflow-hidden transition-colors ${statusStyle}`}
+              transition={{ delay: idx * 0.05 }}
+              className={`bg-white rounded-2xl border shadow-sm overflow-hidden transition-all ${
+                isOpen ? 'border-slate-300 ring-1 ring-slate-200/50' : 'border-slate-200'
+              }`}
             >
               <button
                 onClick={() => setExpandedPhase(isOpen ? null : idx)}
-                className="w-full flex items-center gap-3 p-4 text-left"
+                className="w-full flex items-center gap-4 p-5 text-left"
               >
-                {/* Phase number + status */}
                 <div
-                  className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 ${
-                    phase.status === 'done'
-                      ? 'bg-green-200'
-                      : phase.status === 'active'
-                        ? 'bg-blue-200'
-                        : 'bg-gray-200'
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl flex-shrink-0 border ${
+                    isDone
+                      ? 'bg-slate-50 border-slate-100'
+                      : isActive
+                        ? 'bg-slate-900 text-white border-slate-900'
+                        : 'bg-slate-50 border-slate-100 grayscale opacity-50'
                   }`}
                 >
                   {phase.icon}
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-poppins font-semibold text-gray-800">
-                      Phase {phase.num}: {phase.name}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[15px] font-poppins font-semibold text-slate-900">
+                      Phase {phase.num}
                     </span>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-inter font-medium ${
-                        phase.status === 'done'
-                          ? 'bg-green-200 text-green-700'
-                          : phase.status === 'active'
-                            ? 'bg-blue-200 text-blue-700'
-                            : 'bg-gray-200 text-gray-600'
-                      }`}
-                    >
-                      {phase.status === 'done' ? '✓ Done' : phase.status === 'active' ? '⚡ Active' : '⏳ Upcoming'}
-                    </span>
+                    {isActive && (
+                      <span className="bg-slate-900 text-white text-[9px] px-2 py-0.5 rounded-md font-inter font-bold uppercase tracking-widest animate-pulse">
+                        Active
+                      </span>
+                    )}
+                    {isDone && (
+                      <span className="bg-slate-50 text-slate-400 border border-slate-100 text-[9px] px-2 py-0.5 rounded-md font-inter font-bold uppercase tracking-widest">
+                        Done
+                      </span>
+                    )}
                   </div>
-                  <p className="text-xs font-inter text-gray-500 mt-0.5">{phase.date}</p>
+                  <p className="text-xs font-inter text-slate-500 font-medium truncate">{phase.name}</p>
+                  <p className="text-[10px] font-inter font-bold text-slate-400 mt-1 uppercase tracking-wider">{phase.date}</p>
                 </div>
-                <span className={`text-gray-400 transition-transform ${isOpen ? 'rotate-90' : ''}`}>
-                  ›
-                </span>
+                <ChevronRight className={`w-4 h-4 text-slate-300 transition-transform ${isOpen ? 'rotate-90 text-slate-900' : ''}`} />
               </button>
 
-              {/* Expanded steps */}
-              {isOpen && (
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: 'auto' }}
-                  className="overflow-hidden border-t border-gray-200"
-                >
-                  <div className="px-4 pb-4 pt-3 space-y-3">
-                    <div className="space-y-2">
-                      {phase.steps.map((step, si) => (
-                        <div key={si} className="flex items-start gap-2.5">
-                          <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 font-poppins font-bold mt-0.5 ${
-                              phase.status === 'done'
-                                ? 'bg-green-500 text-white'
-                                : phase.status === 'active'
-                                  ? 'bg-blue-500 text-white'
-                                  : 'bg-gray-300 text-gray-600'
-                            }`}
-                          >
-                            {si + 1}
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: 'auto' }}
+                    exit={{ height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-5 pb-5 pt-1 border-t border-slate-50 mt-1 space-y-4">
+                      <div className="space-y-3 pt-3">
+                        {phase.steps.map((step, si) => (
+                          <div key={si} className="flex items-start gap-3">
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-900 mt-1.5 flex-shrink-0" />
+                            <p className="text-sm font-inter text-slate-600 leading-relaxed font-medium">{step}</p>
                           </div>
-                          <p className="text-xs font-inter text-gray-700 leading-relaxed">{step}</p>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+                      
+                      {/* Ask AI about this phase */}
+                      <button
+                        onClick={() => navigate('chat')}
+                        className="w-full py-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-inter font-bold flex items-center justify-center gap-2 hover:bg-slate-100 transition-all active:scale-[0.98]"
+                      >
+                        <MessageSquare className="w-4 h-4 text-slate-400" />
+                        Ask AI about {phase.name}
+                      </button>
                     </div>
-                    {/* Ask AI about this phase */}
-                    <button
-                      onClick={() => navigate('chat')}
-                      className="w-full py-2 rounded-xl bg-white border border-blue-200 text-blue-700 text-xs font-inter font-medium flex items-center justify-center gap-1.5 hover:bg-blue-50 transition-colors"
-                    >
-                      🤖 Ask AI: "{phase.question}"
-                    </button>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )
         })}

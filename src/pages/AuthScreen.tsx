@@ -29,31 +29,24 @@ export function AuthScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col px-6 py-12 items-center justify-center relative overflow-hidden">
-      {/* Decorative backgrounds */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-blue-100 rounded-full blur-3xl opacity-50 -translate-y-32 -translate-x-32" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-green-100 rounded-full blur-3xl opacity-50 translate-y-32 translate-x-32" />
-
+    <div className="min-h-screen bg-slate-50 flex flex-col px-6 py-12 items-center justify-center relative overflow-hidden">
       <motion.div
         className="max-w-sm w-full relative z-10"
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
       >
         <div className="text-center mb-10">
-          <motion.div
-            className="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-4xl shadow-xl mb-4"
-            style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 60%, #22C55E 100%)' }}
-            animate={{ rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          <div
+            className="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-4xl shadow-sm border border-slate-100 bg-white mb-6"
           >
             🔐
-          </motion.div>
-          <h1 className="text-2xl font-poppins font-bold text-gray-900">Welcome to VoteMate</h1>
-          <p className="text-sm font-inter text-gray-500 mt-2">Sign in to securely track your readiness</p>
+          </div>
+          <h1 className="text-2xl font-poppins font-semibold text-slate-900">Secure Access</h1>
+          <p className="text-sm font-inter text-slate-500 mt-2">Sign in to VoteMate AI securely</p>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
           <AnimatePresence mode="wait">
             {step === 'phone' ? (
               <motion.div
@@ -64,21 +57,20 @@ export function AuthScreen() {
                 className="space-y-5"
               >
                 <div>
-                  <label className="block text-xs font-poppins font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                    Phone Number
+                  <label className="block text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-3">
+                    Mobile Number
                   </label>
-                  <div className="flex items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                    <span className="text-gray-500 font-inter text-sm mr-2 border-r border-gray-300 pr-2">
+                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 focus-within:border-slate-400 transition-all">
+                    <span className="text-slate-400 font-inter text-sm mr-3 border-r border-slate-200 pr-3 font-medium">
                       +91
                     </span>
-                    <Phone className="w-4 h-4 text-gray-400 mr-2" />
                     <input
                       type="tel"
                       maxLength={10}
                       value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                       placeholder="98765 43210"
-                      className="flex-1 bg-transparent text-sm font-inter text-gray-800 placeholder-gray-400 focus:outline-none"
+                      className="flex-1 bg-transparent text-sm font-inter text-slate-800 placeholder-slate-400 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -86,8 +78,7 @@ export function AuthScreen() {
                 <button
                   onClick={handleSendOtp}
                   disabled={phone.length < 10 || loading}
-                  className="w-full py-3.5 rounded-2xl text-white font-poppins font-semibold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)' }}
+                  className="w-full py-4 rounded-xl text-white font-poppins font-medium text-sm flex items-center justify-center gap-2 transition-all bg-slate-900 disabled:opacity-30 active:scale-[0.98]"
                 >
                   {loading ? (
                     <motion.div
@@ -97,7 +88,7 @@ export function AuthScreen() {
                     />
                   ) : (
                     <>
-                      Send OTP <ArrowRight className="w-4 h-4" />
+                      Send Code <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -111,21 +102,20 @@ export function AuthScreen() {
                 className="space-y-5"
               >
                 <div>
-                  <label className="block text-xs font-poppins font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                    Enter Verification Code
+                  <label className="block text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-3">
+                    Verification Code
                   </label>
-                  <p className="text-xs font-inter text-gray-500 mb-3">
-                    We sent a 4-digit code to +91 {phone}
+                  <p className="text-xs font-inter text-slate-500 mb-4">
+                    Sent to +91 {phone}
                   </p>
-                  <div className="flex items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-100 transition-all">
-                    <Lock className="w-4 h-4 text-gray-400 mr-2" />
+                  <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl px-4 py-4 focus-within:border-slate-400 transition-all">
                     <input
                       type="text"
                       maxLength={4}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                       placeholder="••••"
-                      className="flex-1 tracking-[1em] text-center bg-transparent text-lg font-poppins font-bold text-gray-800 placeholder-gray-400 focus:outline-none"
+                      className="flex-1 tracking-[1em] text-center bg-transparent text-xl font-poppins font-bold text-slate-900 placeholder-slate-300 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -133,8 +123,7 @@ export function AuthScreen() {
                 <button
                   onClick={handleVerifyOtp}
                   disabled={otp.length < 4 || loading}
-                  className="w-full py-3.5 rounded-2xl text-white font-poppins font-semibold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #059669 0%, #22C55E 100%)' }}
+                  className="w-full py-4 rounded-xl text-white font-poppins font-medium text-sm flex items-center justify-center gap-2 transition-all bg-slate-900 disabled:opacity-30 active:scale-[0.98]"
                 >
                   {loading ? (
                     <motion.div
@@ -144,13 +133,13 @@ export function AuthScreen() {
                     />
                   ) : (
                     <>
-                      Verify & Secure Login
+                      Verify and Login
                     </>
                   )}
                 </button>
                 <button
                   onClick={() => setStep('phone')}
-                  className="w-full text-center text-xs font-inter text-gray-500 underline"
+                  className="w-full text-center text-xs font-inter font-medium text-slate-500 hover:text-slate-900 transition-colors"
                 >
                   Change phone number
                 </button>

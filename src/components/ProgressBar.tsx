@@ -7,7 +7,7 @@ interface Props {
   completed: string[]
 }
 
-const STEP_COLORS = ['#1E3A8A', '#3B82F6', '#22C55E', '#10B981']
+const STEP_COLORS = ['#0f172a', '#0f172a', '#0f172a', '#0f172a']
 
 export function ProgressBar({ steps, current, completed }: Props) {
   return (
@@ -15,9 +15,9 @@ export function ProgressBar({ steps, current, completed }: Props) {
       {/* Step labels */}
       <div className="flex items-center justify-between relative">
         {/* Connector line */}
-        <div className="absolute top-5 left-6 right-6 h-0.5 bg-gray-200 z-0" />
+        <div className="absolute top-5 left-6 right-6 h-[1px] bg-slate-200 z-0" />
         <motion.div
-          className="absolute top-5 left-6 h-0.5 bg-gradient-to-r from-blue-700 via-blue-500 to-green-500 z-10"
+          className="absolute top-5 left-6 h-[1px] bg-slate-900 z-10"
           initial={{ width: '0%' }}
           animate={{
             width: `${(completed.length / Math.max(steps.length - 1, 1)) * 100}%`,
@@ -34,28 +34,27 @@ export function ProgressBar({ steps, current, completed }: Props) {
             <div key={step.id} className="flex flex-col items-center gap-1 z-20">
               <motion.div
                 initial={{ scale: 0.8 }}
-                animate={{ scale: isCurrent ? 1.1 : 1 }}
+                animate={{ scale: isCurrent ? 1.05 : 1 }}
                 transition={{ type: 'spring', stiffness: 300 }}
-                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 shadow-sm transition-all ${
+                className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
                   isDone
-                    ? 'bg-green-500 border-green-500 text-white'
+                    ? 'bg-slate-900 border-slate-900 text-white shadow-md shadow-slate-200'
                     : isCurrent
-                      ? 'bg-white border-blue-600 text-blue-600 ring-4 ring-blue-100'
-                      : 'bg-gray-100 border-gray-300 text-gray-400'
+                      ? 'bg-white border-slate-900 text-slate-900 ring-4 ring-slate-50 shadow-sm'
+                      : 'bg-white border-slate-200 text-slate-400'
                 }`}
-                style={isDone ? { background: STEP_COLORS[i] } : undefined}
               >
                 {isDone ? (
-                  <CheckCircle2 className="w-5 h-5 text-white" />
+                  <CheckCircle2 className="w-4 h-4 text-white" />
                 ) : isCurrent ? (
-                  <Circle className="w-4 h-4 fill-blue-600 text-blue-600" />
+                  <div className="w-2 h-2 bg-slate-900 rounded-full" />
                 ) : (
                   <Lock className="w-3.5 h-3.5" />
                 )}
               </motion.div>
               <span
-                className={`text-xs font-medium font-inter text-center max-w-16 leading-tight ${
-                  isDone ? 'text-green-600' : isCurrent ? 'text-blue-700' : 'text-gray-400'
+                className={`text-[9px] font-inter font-bold uppercase tracking-widest text-center max-w-16 leading-tight mt-1 transition-colors ${
+                  isDone ? 'text-slate-900' : isCurrent ? 'text-slate-900' : 'text-slate-400'
                 }`}
               >
                 {step.label}

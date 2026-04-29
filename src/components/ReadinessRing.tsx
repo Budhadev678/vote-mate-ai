@@ -26,8 +26,8 @@ export function ReadinessRing({ score, size = 100, label }: Props) {
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="#E5E7EB"
-            strokeWidth={8}
+            stroke="#E2E8F0"
+            strokeWidth={size * 0.08}
           />
           {/* Progress arc */}
           <motion.circle
@@ -36,7 +36,7 @@ export function ReadinessRing({ score, size = 100, label }: Props) {
             r={radius}
             fill="none"
             stroke={color}
-            strokeWidth={8}
+            strokeWidth={size * 0.08}
             strokeLinecap="round"
             strokeDasharray={circumference}
             initial={{ strokeDashoffset: circumference }}
@@ -45,17 +45,23 @@ export function ReadinessRing({ score, size = 100, label }: Props) {
           />
         </svg>
         {/* Center content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-lg">{emoji}</span>
-          <motion.span
-            className="text-lg font-poppins font-bold leading-none"
-            style={{ color }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            {score}%
-          </motion.span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <div className="flex flex-col items-center justify-center -space-y-0.5">
+            <span style={{ fontSize: size * 0.18 }} className="leading-none">{emoji}</span>
+            <motion.span
+              className="font-poppins font-bold leading-none tracking-tight"
+              style={{ 
+                color, 
+                fontSize: score === 100 ? size * 0.20 : size * 0.26,
+                marginTop: size * 0.08 
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              {score}%
+            </motion.span>
+          </div>
         </div>
       </div>
       {label && (
