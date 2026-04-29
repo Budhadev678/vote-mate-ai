@@ -42,10 +42,16 @@ export function ChatScreen() {
   const [isListening, setIsListening] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(messages.length === 0)
   const endRef = useRef<HTMLDivElement>(null)
+  const isInitialMount = useRef(true)
 
   // Auto-scroll
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (endRef.current) {
+      endRef.current.scrollIntoView({ 
+        behavior: isInitialMount.current ? 'auto' : 'smooth' 
+      })
+      isInitialMount.current = false
+    }
   }, [messages, isAiTyping])
 
   useEffect(() => {
