@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, Check } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import type { VoterType, InteractionMode } from '../types'
+import { InfoButton } from '../components/InfoButton'
 
 // ─── Indian states list ───────────────────────────────────────────
 const STATES = [
@@ -82,9 +83,12 @@ export function OnboardingScreen() {
         >
           ← Back
         </button>
-        <span className="text-sm font-inter text-gray-500">
-          Step {onboardingStep + 1} of {totalSteps}
-        </span>
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-inter text-gray-500">
+            Step {onboardingStep + 1} of {totalSteps}
+          </span>
+          <InfoButton text="We need these details to personalize your experience. Your data never leaves your device and is only used to compute your readiness score locally!" />
+        </div>
       </div>
 
       {/* Step progress dots */}

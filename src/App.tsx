@@ -126,7 +126,7 @@ function App() {
       <OfflineBanner />
 
       {/* Main screen */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
+      <main className="flex-1 flex flex-col relative overflow-y-auto">
         <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
       </main>
 

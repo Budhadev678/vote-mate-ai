@@ -6,6 +6,7 @@ import { ReadinessRing } from '../components/ReadinessRing'
 import { AlertBanner } from '../components/AlertBanner'
 import { QUICK_CARDS } from '../components/KnowledgeCard'
 import { KnowledgeCard } from '../components/KnowledgeCard'
+import { InfoButton } from '../components/InfoButton'
 
 const JOURNEY_STEPS = [
   { id: 'registration', label: 'Register' },
@@ -70,7 +71,12 @@ export function DashboardScreen() {
             )}
           </div>
 
-          <ReadinessRing score={user.readinessScore} size={80} label="Readiness" />
+          <div className="relative">
+            <ReadinessRing score={user.readinessScore} size={80} label="Readiness" />
+            <div className="absolute -top-2 -right-2">
+              <InfoButton text="Your Readiness Score is calculated based on Registration, Verification, ID check, and finding your Booth. Keep completing steps to hit 100%!" />
+            </div>
+          </div>
         </div>
 
         {/* Progress bar */}

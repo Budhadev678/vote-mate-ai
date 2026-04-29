@@ -39,7 +39,7 @@ const VOTING_DATE = new Date('2026-05-20')
 interface VoteMateStor {
   // ── Navigation ──────────────────────────────────────────────────
   currentScreen: Screen
-  previousScreen: Screen | null
+  screenHistory: Screen[]
   navigate: (screen: Screen) => void
   goBack: () => void
 
@@ -192,14 +192,18 @@ export const useStore = create<VoteMateStor>()(
     (set, get) => ({
       // ── Navigation ────────────────────────────────────────────────
       currentScreen: 'landing',
-      previousScreen: null,
+      screenHistory: [],
       navigate: (screen) =>
-        set((s) => ({ previousScreen: s.currentScreen, currentScreen: screen })),
+        set((s) => ({ screenHistory: [...s.screenHistory, s.currentScreen], currentScreen: screen })),
       goBack: () =>
-        set((s) => ({
-          currentScreen: s.previousScreen ?? 'dashboard',
-          previousScreen: null,
-        })),
+        set((s) => {
+          const newHistory = [...s.screenHistory]
+          const prev = newHistory.pop()
+          return {
+            currentScreen: prev ?? 'dashboard',
+            screenHistory: newHistory,
+          }
+        }),
 
       // ── User Profile ──────────────────────────────────────────────
       user: DEFAULT_PROFILE,

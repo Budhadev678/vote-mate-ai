@@ -8,6 +8,7 @@ import { KnowledgeCard, QUICK_CARDS } from '../components/KnowledgeCard'
 import type { ChatMessage, KnowledgeCard as KCard } from '../types'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { InfoButton } from '../components/InfoButton'
 
 // ─── Quick suggestion chips ────────────────────────────────────────
 const QUICK_SUGGESTIONS = [
@@ -131,7 +132,7 @@ export function ChatScreen() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col flex-1 bg-gray-50 h-full overflow-hidden absolute inset-0">
       {/* Header */}
       <div
         className="flex items-center gap-3 px-4 py-3 shadow-sm relative"
@@ -143,11 +144,14 @@ export function ChatScreen() {
         <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-lg">
           🤖
         </div>
-        <div className="flex-1">
-          <p className="text-white font-poppins font-bold text-sm">VoteMate AI</p>
-          <p className="text-blue-200 text-xs font-inter">
-            {isAiTyping ? 'Thinking...' : 'Always here to help'}
-          </p>
+        <div className="flex-1 flex items-center gap-2">
+          <div>
+            <p className="text-white font-poppins font-bold text-sm">VoteMate AI</p>
+            <p className="text-blue-200 text-xs font-inter">
+              {isAiTyping ? 'Thinking...' : 'Always here to help'}
+            </p>
+          </div>
+          <InfoButton text="Speak or type to me! I'm fully context-aware and know your state and voting status. Use the 'Simplify' button if answers are too complex." />
         </div>
         <div className="flex gap-2">
           {/* Confusion mode toggle */}

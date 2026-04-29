@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Rocket, Zap, ArrowRight } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { InfoButton } from '../components/InfoButton'
 
 export function LandingScreen() {
   const { navigate, user, updateUser } = useStore()
@@ -15,6 +16,10 @@ export function LandingScreen() {
 
   return (
     <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+      <div className="absolute top-4 right-4 z-50">
+        <InfoButton text="VoteMate AI is your ultimate election companion! We use AI to guide you through registration, news verification, and booth finding." />
+      </div>
+
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-50 -translate-y-32 translate-x-32" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-100 rounded-full blur-3xl opacity-50 translate-y-32 -translate-x-32" />
