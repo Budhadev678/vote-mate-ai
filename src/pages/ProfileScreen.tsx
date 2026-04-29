@@ -12,6 +12,15 @@ export function ProfileScreen() {
   const { user, updateUser, resetUser, goBack, navigate } = useStore()
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput] = useState(user.name || '')
+  const [editingState, setEditingState] = useState(false)
+
+  const STATES = [
+    'Andhra Pradesh','Assam','Bihar','Chhattisgarh','Delhi','Goa','Gujarat',
+    'Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh',
+    'Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab',
+    'Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh',
+    'Uttarakhand','West Bengal',
+  ]
 
   const handleSaveName = () => {
     updateUser({ name: nameInput })
@@ -145,16 +154,44 @@ export function ProfileScreen() {
           </div>
 
           {/* State */}
-          <div className="flex items-center gap-3 py-3">
-            <MapPin className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-inter text-slate-700 flex-1 font-medium">Your Region</span>
-            <span className="text-sm font-inter text-slate-600 font-medium">{user.state || 'Not set'}</span>
-            <button
-              onClick={() => navigate('onboarding')}
-              className="text-xs text-slate-900 font-inter font-bold ml-3 bg-slate-100 px-2 py-1 rounded-md hover:bg-slate-200 transition-colors"
-            >
-              Edit
-            </button>
+          <div className="flex flex-col gap-2 py-3">
+            <div className="flex items-center gap-3">
+              <MapPin className="w-4 h-4 text-slate-400" />
+              <span className="text-sm font-inter text-slate-700 flex-1 font-medium">Your Region</span>
+              {!editingState && (
+                <>
+                  <span className="text-sm font-inter text-slate-600 font-medium">{user.state || 'Not set'}</span>
+                  <button
+                    onClick={() => setEditingState(true)}
+                    className="text-xs text-slate-900 font-inter font-bold ml-3 bg-slate-100 px-2 py-1 rounded-md hover:bg-slate-200 transition-colors"
+                  >
+                    Edit
+                  </button>
+                </>
+              )}
+            </div>
+            
+            {editingState && (
+              <div className="mt-2 pl-7 flex flex-col gap-2">
+                <select 
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-inter text-slate-700 focus:outline-none focus:border-slate-400"
+                  value={user.state || ''}
+                  onChange={(e) => {
+                    updateUser({ state: e.target.value })
+                    setEditingState(false)
+                  }}
+                >
+                  <option value="" disabled>Select your state</option>
+                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <button 
+                  onClick={() => setEditingState(false)}
+                  className="text-xs text-slate-500 self-end hover:text-slate-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </motion.div>
 
