@@ -45,7 +45,7 @@ export function DashboardScreen() {
   const voterLabel = user.voterType === 'first-time' ? 'First-Time Voter' : 'Voter'
 
   return (
-    <div className="min-h-screen bg-mesh pb-40">
+    <div className="min-h-full bg-mesh pb-32">
       {/* Alerts */}
       <AlertBanner />
 

@@ -88,7 +88,7 @@ export function GuidedScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-40">
+    <div className="min-h-full bg-slate-50 pb-40">
       {/* Header */}
       <div className="px-5 pt-8 pb-6 bg-white border-b border-slate-200">
         <button

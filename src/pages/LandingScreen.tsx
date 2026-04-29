@@ -15,7 +15,7 @@ export function LandingScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+    <div className="min-h-full bg-mesh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       <div className="absolute top-4 right-4 z-50">
         <InfoButton text="VoteMate AI is your secure and private election companion. We guide you through registration, verified news, and finding your booth." />
       </div>

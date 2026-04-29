@@ -44,7 +44,7 @@ export function PollingBoothScreen() {
   const currentSlotIdx = nowHour < 8 ? 0 : nowHour < 10 ? 1 : nowHour < 12 ? 2 : nowHour < 14 ? 3 : nowHour < 16 ? 4 : 5
 
   return (
-    <div className="min-h-screen bg-mesh pb-40">
+    <div className="min-h-full bg-mesh pb-32">
       {/* Header */}
       <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg mb-6 relative">
         <button onClick={goBack} className="text-white/80 hover:text-white mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
@@ -212,18 +212,19 @@ export function PollingBoothScreen() {
                       transition={{ delay: i * 0.08, duration: 0.6 }}
                     />
                   </div>
-                  <span className="text-xs font-inter text-gray-500 w-16 text-right">{slot.wait}</span>
-                  {slot.best && (
-                    <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-inter">
-                      Best!
-                    </span>
-                  )}
-                  {slot.worst && (
-                    <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-inter">
-                      Busy
-                    </span>
-                  )}
-                  <span className="text-[10px] font-inter text-slate-400 w-12 text-right">{slot.wait}</span>
+                  <div className="w-14 flex-shrink-0 text-right">
+                    {slot.best ? (
+                      <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-inter font-bold">
+                        Best
+                      </span>
+                    ) : slot.worst ? (
+                      <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-inter font-bold">
+                        Busy
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-inter text-slate-500 font-medium">{slot.wait}</span>
+                    )}
+                  </div>
                 </div>
               )
             })}

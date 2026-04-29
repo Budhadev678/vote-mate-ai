@@ -27,7 +27,7 @@ export function InsightsScreen() {
   )
 
   return (
-    <div className="min-h-screen bg-mesh pb-40">
+    <div className="min-h-full bg-mesh pb-40">
       {/* Header */}
       <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg mb-6 relative">
         <button
