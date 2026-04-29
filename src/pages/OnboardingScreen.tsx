@@ -22,19 +22,19 @@ interface OnboardingStep {
 
 const STEPS: OnboardingStep[] = [
   {
-    key: 'voterType',
-    aiMessage: 'Are you voting for the first time? 🗳️',
+    key: 'language',
+    aiMessage: 'Please select your preferred language 🌍',
     type: 'choice',
   },
   {
-    key: 'state',
-    aiMessage: 'Which state are you from? 📍',
-    type: 'dropdown',
+    key: 'registered',
+    aiMessage: 'Are you already registered to vote? 📋',
+    type: 'choice',
   },
   {
-    key: 'preferredMode',
-    aiMessage: 'How do you prefer to get help? 🧠',
-    type: 'mode',
+    key: 'hasDocument',
+    aiMessage: 'Do you have a valid photo ID (like Aadhaar)? 🧾',
+    type: 'choice',
   },
 ]
 
@@ -52,9 +52,13 @@ export function OnboardingScreen() {
     setSelections(newSelections)
 
     // Update store
-    if (key === 'voterType') updateUser({ voterType: value as VoterType })
-    if (key === 'state') updateUser({ state: value })
-    if (key === 'preferredMode') updateUser({ preferredMode: value as InteractionMode })
+    if (key === 'language') updateUser({ language: value as 'en' | 'hi' | 'or' })
+    if (key === 'registered' && value === 'yes') {
+      useStore.getState().completeStep('registration')
+    }
+    if (key === 'hasDocument' && value === 'yes') {
+      updateUser({ hasValidDocument: true })
+    }
 
     // Advance step after short delay
     setTimeout(() => {
@@ -74,7 +78,7 @@ export function OnboardingScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col px-6 py-10">
+    <div className="min-h-screen bg-slate-50 flex flex-col px-6 py-10 pb-40">
       {/* Header */}
       <div className="flex items-center justify-between mb-10">
         <button
@@ -124,25 +128,72 @@ export function OnboardingScreen() {
             </div>
           </div>
 
-          {/* Voter type choice */}
-          {step.type === 'choice' && (
+          {step.key === 'language' && (
             <div className="flex flex-col gap-3 mt-2 pl-13">
               {[
-                { label: 'Yes, first time!', value: 'first-time', emoji: '✋' },
-                { label: 'No, voted before', value: 'experienced', emoji: '🔁' },
+                { label: 'English', value: 'en', emoji: '🔤' },
+                { label: 'हिंदी (Hindi)', value: 'hi', emoji: 'अ' },
+                { label: 'ଓଡ଼ିଆ (Odia)', value: 'or', emoji: 'ଓ' },
               ].map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => handleSelect('voterType', opt.value)}
+                  onClick={() => handleSelect('language', opt.value)}
                   className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
-                    selections['voterType'] === opt.value
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-md'
-                      : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                    selections['language'] === opt.value
+                      ? 'btn-gradient text-white shadow-lg border-transparent'
+                      : 'bg-white/80 backdrop-blur-sm border-slate-200 text-slate-700 hover:border-slate-300'
                   }`}
                 >
                   <span className="text-lg">{opt.emoji}</span>
                   <span className="text-sm font-poppins font-medium">{opt.label}</span>
-                  {selections['voterType'] === opt.value && <Check className="w-4 h-4 text-white ml-auto" />}
+                  {selections['language'] === opt.value && <Check className="w-4 h-4 text-white ml-auto" />}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {step.key === 'registered' && (
+            <div className="flex flex-col gap-3 mt-2 pl-13">
+              {[
+                { label: 'Yes', value: 'yes', emoji: '✅' },
+                { label: 'No', value: 'no', emoji: '❌' },
+                { label: 'Not Sure', value: 'not-sure', emoji: '🤔' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleSelect('registered', opt.value)}
+                  className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
+                    selections['registered'] === opt.value
+                      ? 'btn-gradient text-white shadow-lg border-transparent'
+                      : 'bg-white/80 backdrop-blur-sm border-slate-200 text-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  <span className="text-lg">{opt.emoji}</span>
+                  <span className="text-sm font-poppins font-medium">{opt.label}</span>
+                  {selections['registered'] === opt.value && <Check className="w-4 h-4 text-white ml-auto" />}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {step.key === 'hasDocument' && (
+            <div className="flex flex-col gap-3 mt-2 pl-13">
+              {[
+                { label: 'Yes', value: 'yes', emoji: '✅' },
+                { label: 'No', value: 'no', emoji: '❌' },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => handleSelect('hasDocument', opt.value)}
+                  className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all active:scale-[0.98] ${
+                    selections['hasDocument'] === opt.value
+                      ? 'btn-gradient text-white shadow-lg border-transparent'
+                      : 'bg-white/80 backdrop-blur-sm border-slate-200 text-slate-700 hover:border-slate-300'
+                  }`}
+                >
+                  <span className="text-lg">{opt.emoji}</span>
+                  <span className="text-sm font-poppins font-medium">{opt.label}</span>
+                  {selections['hasDocument'] === opt.value && <Check className="w-4 h-4 text-white ml-auto" />}
                 </button>
               ))}
             </div>

@@ -132,7 +132,7 @@ export function ChatScreen() {
   }
 
   return (
-    <div className="flex flex-col flex-1 bg-slate-50 h-full overflow-hidden absolute inset-0">
+    <div className="flex flex-col h-full bg-slate-50 absolute inset-0 z-10 overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-200 shadow-sm z-10">
         <button onClick={goBack} className="text-slate-500 hover:text-slate-800 transition-colors">
@@ -194,12 +194,12 @@ export function ChatScreen() {
               </div>
 
               {/* Bubble */}
-              <div className={`max-w-[85%] space-y-2 ${msg.role === 'user' ? 'items-end flex flex-col' : ''}`}>
+              <div className={`max-w-[85%] min-w-0 space-y-2 ${msg.role === 'user' ? 'items-end flex flex-col' : ''}`}>
                 <div
-                  className={`px-4 py-3 rounded-2xl text-[14px] font-inter leading-relaxed shadow-sm border ${
-                    msg.role === 'assistant'
-                      ? 'bg-white border-slate-200 text-slate-800 rounded-tl-sm'
-                      : 'bg-slate-900 text-white border-slate-900 rounded-tr-sm'
+                  className={`w-full rounded-2xl p-3.5 relative overflow-hidden ${
+                    msg.role === 'user'
+                      ? 'btn-gradient rounded-br-sm shadow-md text-white'
+                      : 'bg-white border border-slate-200 rounded-bl-sm text-slate-800 shadow-sm'
                   }`}
                 >
                   {msg.role === 'assistant' ? (
@@ -285,7 +285,7 @@ export function ChatScreen() {
       </div>
 
       {/* Input bar */}
-      <div className="px-4 py-4 bg-white border-t border-slate-200 flex items-center gap-3 pb-safe-offset-4">
+      <div className="px-4 py-4 bg-white border-t border-slate-200 flex items-center gap-3 pb-[80px]">
         <div className="flex-1 flex items-center bg-slate-100 rounded-2xl px-4 py-3 border border-slate-200/50">
           <input
             ref={inputRef}

@@ -15,7 +15,7 @@ export function LandingScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
+    <div className="min-h-screen bg-mesh flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
       <div className="absolute top-4 right-4 z-50">
         <InfoButton text="VoteMate AI is your secure and private election companion. We guide you through registration, verified news, and finding your booth." />
       </div>
@@ -75,7 +75,7 @@ export function LandingScreen() {
         <div className="space-y-3 pt-4">
           <button
             onClick={handleStart}
-            className="w-full py-4 rounded-xl text-white font-poppins font-medium text-base flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-[0.98] bg-slate-900 hover:bg-slate-800"
+            className="btn-gradient w-full py-4 rounded-xl font-poppins font-semibold text-base flex items-center justify-center gap-2 shadow-xl"
           >
             Start My Journey
             <ArrowRight className="w-4 h-4" />
@@ -102,7 +102,7 @@ export function LandingScreen() {
         {/* Language toggle */}
         <div className="flex items-center justify-center gap-2 text-xs font-inter text-slate-500 pt-4">
           <span>Language / भाषा:</span>
-          {(['en', 'hi'] as const).map((lang) => (
+          {(['en', 'hi', 'or'] as const).map((lang) => (
             <button
               key={lang}
               onClick={() => updateUser({ language: lang })}
@@ -112,7 +112,7 @@ export function LandingScreen() {
                   : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
               }`}
             >
-              {lang === 'en' ? 'English' : 'हिंदी'}
+              {lang === 'en' ? 'English' : lang === 'hi' ? 'हिंदी' : 'ଓଡ଼ିଆ'}
             </button>
           ))}
         </div>

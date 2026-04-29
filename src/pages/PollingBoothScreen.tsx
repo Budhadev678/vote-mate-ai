@@ -44,14 +44,14 @@ export function PollingBoothScreen() {
   const currentSlotIdx = nowHour < 8 ? 0 : nowHour < 10 ? 1 : nowHour < 12 ? 2 : nowHour < 14 ? 3 : nowHour < 16 ? 4 : 5
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-28">
+    <div className="min-h-screen bg-mesh pb-40">
       {/* Header */}
-      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
-        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
+      <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg mb-6 relative">
+        <button onClick={goBack} className="text-white/80 hover:text-white mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
-        <h1 className="text-xl font-poppins font-semibold text-slate-900">Find Your Booth</h1>
-        <p className="text-slate-500 text-xs font-inter mt-1.5 font-medium">
+        <h1 className="text-xl font-poppins font-semibold text-white">Find Your Booth</h1>
+        <p className="text-white/80 text-xs font-inter mt-1.5 font-medium">
           Locate your assigned official polling station
         </p>
       </div>
@@ -79,7 +79,7 @@ export function PollingBoothScreen() {
               <button
                 onClick={handleFindBooth}
                 disabled={loading}
-                className="px-6 py-3 rounded-xl text-white text-sm font-poppins font-medium bg-slate-900 disabled:opacity-30 active:scale-[0.98] transition-all"
+                className="btn-gradient px-6 py-3 rounded-xl text-white text-sm font-poppins font-semibold shadow-md disabled:opacity-50 active:scale-[0.98] transition-all"
               >
                 {loading ? (
                   <motion.div
@@ -161,7 +161,7 @@ export function PollingBoothScreen() {
             <div className="flex gap-3">
               <button
                 onClick={() => window.open('https://maps.google.com', '_blank')}
-                className="flex-1 py-3.5 rounded-xl text-white text-sm font-poppins font-semibold flex items-center justify-center gap-2 bg-slate-900 active:scale-[0.98] transition-all"
+                className="btn-gradient flex-1 py-3.5 rounded-xl text-white text-sm font-poppins font-semibold flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-all"
               >
                 <Navigation className="w-4 h-4" />
                 Navigate

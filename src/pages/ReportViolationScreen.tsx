@@ -15,7 +15,7 @@ export function ReportViolationScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-28">
+    <div className="min-h-screen bg-slate-50 pb-40">
       <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
         <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
           <ArrowLeft className="w-4 h-4" /> Back

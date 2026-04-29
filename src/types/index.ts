@@ -23,7 +23,7 @@ export type Screen =
 
 // ─── User Profile ─────────────────────────────────────────────────
 export type VoterType = 'first-time' | 'experienced' | null
-export type Language = 'en' | 'hi'
+export type Language = 'en' | 'hi' | 'or'
 export type InteractionMode = 'chat' | 'guided' | 'quick'
 
 export interface UserProfile {

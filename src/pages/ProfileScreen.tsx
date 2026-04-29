@@ -38,18 +38,18 @@ export function ProfileScreen() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-28">
+    <div className="min-h-screen bg-mesh pb-40">
       {/* Header */}
-      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm relative">
+      <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg relative mb-6">
         <button
           onClick={goBack}
-          className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium"
+          className="text-white/80 hover:text-white mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-3xl shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-3xl shadow-sm">
             {user.voterType === 'first-time' ? '🌟' : '🗳️'}
           </div>
           <div className="flex-1">
@@ -59,7 +59,7 @@ export function ProfileScreen() {
                   type="text"
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg text-slate-800 text-sm font-inter border border-slate-300 focus:outline-none focus:border-slate-500"
+                  className="flex-1 px-3 py-1.5 rounded-lg text-slate-800 text-sm font-inter border border-slate-300 focus:outline-none focus:border-slate-500 bg-white"
                   autoFocus
                 />
                 <button
@@ -74,13 +74,13 @@ export function ProfileScreen() {
                 onClick={() => setEditingName(true)}
                 className="text-left group"
               >
-                <p className="text-slate-900 font-poppins font-semibold text-xl leading-tight group-hover:text-slate-600 transition-colors">
+                <p className="text-white font-poppins font-semibold text-xl leading-tight group-hover:text-white/80 transition-colors">
                   {user.name || 'Set your name'}
                 </p>
-                <p className="text-slate-400 text-xs font-inter mt-1 font-medium">Tap to edit name</p>
+                <p className="text-white/60 text-xs font-inter mt-1 font-medium">Tap to edit name</p>
               </button>
             )}
-            <p className="text-slate-500 text-xs font-inter mt-2 capitalize font-medium">
+            <p className="text-white/80 text-xs font-inter mt-2 capitalize font-medium">
               {user.voterType?.replace('-', ' ') || 'Voter'} · {user.state || 'India'}
             </p>
           </div>
@@ -107,17 +107,17 @@ export function ProfileScreen() {
             <Globe className="w-4 h-4 text-slate-400" />
             <span className="text-sm font-inter text-slate-700 flex-1 font-medium">Language</span>
             <div className="flex gap-2">
-              {(['en', 'hi'] as Language[]).map((lang) => (
+              {(['en', 'hi', 'or'] as Language[]).map((lang) => (
                 <button
                   key={lang}
                   onClick={() => updateUser({ language: lang })}
                   className={`px-3 py-1.5 rounded-lg text-xs font-inter font-semibold border transition-all ${
                     user.language === lang
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                      ? 'btn-gradient shadow-sm'
                       : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  {lang === 'en' ? 'English' : 'हिंदी'}
+                  {lang === 'en' ? 'English' : lang === 'hi' ? 'हिंदी' : 'ଓଡ଼ିଆ'}
                 </button>
               ))}
             </div>
@@ -134,7 +134,7 @@ export function ProfileScreen() {
                   onClick={() => updateUser({ preferredMode: mode })}
                   className={`px-3 py-1.5 rounded-lg text-xs font-inter font-semibold border capitalize transition-all ${
                     user.preferredMode === mode
-                      ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                      ? 'btn-gradient shadow-sm'
                       : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                   }`}
                 >

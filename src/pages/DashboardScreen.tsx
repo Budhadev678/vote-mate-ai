@@ -45,22 +45,22 @@ export function DashboardScreen() {
   const voterLabel = user.voterType === 'first-time' ? 'First-Time Voter' : 'Voter'
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-28">
+    <div className="min-h-screen bg-mesh pb-40">
       {/* Alerts */}
       <AlertBanner />
 
       {/* Header */}
-      <div className="px-5 pt-8 pb-6 bg-white border-b border-slate-200">
+      <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg mb-6">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-slate-500 text-xs font-inter mb-1">Welcome</p>
-            <h1 className="text-2xl font-poppins font-semibold text-slate-900 leading-tight">
+            <p className="text-white/80 text-xs font-inter mb-1">Welcome</p>
+            <h1 className="text-2xl font-poppins font-semibold text-white leading-tight">
               {user.name || voterLabel}
             </h1>
             {user.state && (
               <div className="flex items-center gap-1 mt-1.5">
-                <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-slate-600 text-sm font-inter">{user.state}</span>
+                <MapPin className="w-3.5 h-3.5 text-white/80" />
+                <span className="text-white/90 text-sm font-inter">{user.state}</span>
               </div>
             )}
           </div>
@@ -75,13 +75,15 @@ export function DashboardScreen() {
         </div>
 
         {/* Progress bar */}
-        <div className="mt-6 pt-5 border-t border-slate-100">
-          <p className="text-slate-500 text-xs font-inter mb-3 font-medium uppercase tracking-wider">Your Progress</p>
-          <ProgressBar
-            steps={JOURNEY_STEPS}
-            current={user.currentStep}
-            completed={user.stepsCompleted}
-          />
+        <div className="mt-6 pt-5 border-t border-white/20">
+          <p className="text-white/80 text-xs font-inter mb-3 font-medium uppercase tracking-wider">Your Progress</p>
+          <div className="bg-white/10 p-3 rounded-2xl backdrop-blur-sm border border-white/10">
+            <ProgressBar
+              steps={JOURNEY_STEPS}
+              current={user.currentStep}
+              completed={user.stepsCompleted}
+            />
+          </div>
         </div>
       </div>
 
@@ -102,7 +104,7 @@ export function DashboardScreen() {
             </div>
             <button
               onClick={() => navigate(nextAction.screen)}
-              className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-poppins font-medium transition-colors flex-shrink-0 flex items-center gap-1 active:scale-95"
+              className="btn-gradient px-5 py-2.5 rounded-xl text-sm font-poppins font-medium transition-colors flex-shrink-0 flex items-center gap-1 active:scale-95 shadow-md"
             >
               Continue
             </button>
@@ -210,6 +212,52 @@ export function DashboardScreen() {
             <p className="text-xs font-inter text-slate-500">See how your area is preparing</p>
           </div>
           <ChevronRight className="w-4 h-4 text-slate-400" />
+        </motion.div>
+
+        {/* Notifications Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-200"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
+                <span className="text-amber-600 text-lg">🔔</span>
+              </div>
+              <p className="text-sm font-poppins font-medium text-slate-900">Notifications</p>
+            </div>
+            {useStore.getState().alerts.length > 0 && (
+              <span className="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                {useStore.getState().alerts.length} new
+              </span>
+            )}
+          </div>
+          
+          <div className="space-y-2">
+            {useStore.getState().alerts.length === 0 ? (
+              <p className="text-xs text-slate-500 font-inter py-2 text-center bg-slate-50 rounded-lg">You're all caught up!</p>
+            ) : (
+              useStore.getState().alerts.slice(0, 3).map((alert) => (
+                <div key={alert.id} className="flex items-start gap-3 p-2 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="text-sm mt-0.5">{alert.type === 'urgent' ? '⚡' : alert.type === 'warning' ? '📍' : '📊'}</div>
+                  <p className="text-xs font-inter text-slate-700 leading-snug flex-1">{alert.message}</p>
+                </div>
+              ))
+            )}
+          </div>
+          {useStore.getState().alerts.length > 0 && (
+             <button 
+               onClick={() => {
+                 const store = useStore.getState();
+                 store.alerts.forEach(a => store.dismissAlert(a.id));
+               }}
+               className="w-full mt-3 py-2 text-xs font-inter font-medium text-slate-500 hover:text-slate-900 transition-colors bg-slate-50 rounded-lg"
+             >
+               Clear All
+             </button>
+          )}
         </motion.div>
       </div>
     </div>

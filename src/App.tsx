@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore } from './store/useStore'
 
@@ -48,6 +48,14 @@ function PageTransition({ children, screenKey }: { children: React.ReactNode; sc
 
 function App() {
   const { currentScreen, setOffline } = useStore()
+  const mainRef = useRef<HTMLElement>(null)
+
+  // ── Scroll to top on screen change ─────────────────────────────
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0
+    }
+  }, [currentScreen])
 
   // ── Offline detection ──────────────────────────────────────────
   useEffect(() => {
@@ -120,13 +128,12 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex justify-center items-center p-0 sm:p-4 md:p-8">
-      <div className="w-full max-w-md bg-white h-[100dvh] sm:h-[90vh] sm:rounded-[2.5rem] flex flex-col relative shadow-2xl border border-slate-200 overflow-hidden ring-1 ring-slate-900/5">
+    <div className="w-full max-w-[480px] mx-auto h-[100dvh] bg-slate-50 flex flex-col relative shadow-2xl sm:border-x sm:border-slate-200 overflow-hidden">
       {/* Offline banner */}
       <OfflineBanner />
 
       {/* Main screen */}
-      <main className="flex-1 flex flex-col relative overflow-y-auto">
+      <main ref={mainRef} className="flex-1 flex flex-col w-full overflow-y-auto overflow-x-hidden relative">
         <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
       </main>
 
@@ -134,8 +141,7 @@ function App() {
       <BottomNav />
 
       {/* Floating AI button */}
-        <FloatingBot />
-      </div>
+      <FloatingBot />
     </div>
   )
 }
@@ -143,20 +149,48 @@ function App() {
 // ── Offline banner component ───────────────────────────────────────
 function OfflineBanner() {
   const isOffline = useStore((s) => s.isOffline)
+  const [dismissed, setDismissed] = useState(false)
+
+  // Reset dismissed state when coming back online
+  useEffect(() => {
+    if (!isOffline) setDismissed(false)
+  }, [isOffline])
+
+  if (!isOffline || dismissed) return null
+
   return (
-    <AnimatePresence>
-      {isOffline && (
-        <motion.div
-          initial={{ height: 0 }}
-          animate={{ height: 'auto' }}
-          exit={{ height: 0 }}
-          className="bg-slate-900 text-white text-[10px] font-inter font-bold uppercase tracking-[0.2em] py-2.5 px-4 flex items-center justify-center gap-3 border-b border-slate-800"
-        >
-          <span className="w-2 h-2 rounded-full bg-slate-500 animate-pulse" />
-          <span>Offline Mode — Features Limited</span>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className="absolute inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-6">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-200"
+      >
+        <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mb-5 border border-red-100">
+          <span className="text-3xl">🚫</span>
+        </div>
+        <h3 className="text-xl font-poppins font-semibold text-slate-900 mb-2">
+          No Internet
+        </h3>
+        <p className="text-sm font-inter text-slate-500 mb-8 leading-relaxed">
+          You are currently offline. Some features like live chat or crowd prediction may not work, but you can still access downloaded guides and your readiness profile.
+        </p>
+
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-poppins font-medium transition-colors"
+          >
+            Retry Connection
+          </button>
+          <button
+            onClick={() => setDismissed(true)}
+            className="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl text-sm font-poppins font-medium transition-colors"
+          >
+            Continue Offline
+          </button>
+        </div>
+      </motion.div>
+    </div>
   )
 }
 

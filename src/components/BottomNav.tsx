@@ -16,7 +16,7 @@ const NAV_ITEMS: NavItem[] = [
   { icon: User, label: 'Profile', screen: 'profile' },
 ]
 
-const HIDE_ON: Screen[] = ['landing', 'onboarding', 'chat']
+const HIDE_ON: Screen[] = ['landing', 'onboarding']
 
 export function BottomNav() {
   const { currentScreen, navigate } = useStore()
@@ -24,7 +24,7 @@ export function BottomNav() {
   if (HIDE_ON.includes(currentScreen)) return null
 
   return (
-    <nav className="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 z-40 bg-white border-t border-slate-200 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+    <nav className="fixed bottom-0 w-full max-w-[480px] left-1/2 -translate-x-1/2 z-40 bg-white border-t border-slate-200 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
       <div className="flex items-center justify-around px-3 py-3">
         {NAV_ITEMS.map((item) => {
           const active = currentScreen === item.screen

@@ -11,7 +11,7 @@ export function FloatingBot() {
   if (!showFloatingBot || hiddenScreens.includes(currentScreen)) return null
 
   return (
-    <div className="fixed bottom-24 right-4 sm:right-[calc(50%-13rem)] z-50 flex flex-col items-end gap-2">
+    <div className="fixed bottom-24 right-4 sm:right-auto sm:ml-[400px] z-50 flex flex-col items-end gap-2">
       {/* Information 'i' button */}
       <AnimatePresence>
         {showInfo && (
