@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, ChevronRight, Zap, AlertTriangle, Phone, MessageSquare } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { InfoButtonLight } from '../components/InfoButton'
 
 const ESSENTIAL_STEPS = [
   { icon: '📋', step: 'Check Electoral Roll', sub: 'Confirm your name is listed', link: 'voters.eci.gov.in', time: '2 min' },
@@ -22,18 +23,26 @@ export function QuickModeScreen() {
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
       {/* Header */}
-      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
-        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
-          <ArrowLeft className="w-4 h-4" /> Back
+      <div className="px-5 pt-10 pb-6 bg-white border-b border-slate-100 shadow-sm">
+        <button onClick={goBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 mb-5 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-inter font-medium">Back</span>
         </button>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white shadow-sm">
-            <Zap className="w-6 h-6" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm"
+              style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>
+              <Zap className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-xl font-poppins font-bold text-slate-900">Quick Guide</h1>
+              <p className="text-slate-400 text-[11px] font-inter font-semibold mt-0.5">Essential info for busy voters</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-poppins font-semibold text-slate-900">Quick Guide</h1>
-            <p className="text-slate-500 text-xs font-inter mt-1 font-medium">Essential information for busy voters</p>
-          </div>
+          <InfoButtonLight
+            text="Quick Mode gives you the most essential election information in under 2 minutes. For a complete guided journey with step-by-step instructions, use the Guided Mode from Dashboard."
+            title="Quick Mode"
+          />
         </div>
       </div>
 

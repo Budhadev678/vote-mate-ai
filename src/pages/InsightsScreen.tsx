@@ -3,6 +3,7 @@ import { ArrowLeft, Lightbulb, TrendingUp, Activity, User, Globe, FileText, MapP
 import { useStore } from '../store/useStore'
 import { ReadinessRing } from '../components/ReadinessRing'
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts'
+import { InfoButton } from '../components/InfoButton'
 
 // Simulated progress history
 const PROGRESS_HISTORY = [
@@ -29,17 +30,24 @@ export function InsightsScreen() {
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
       {/* Header */}
-      <div className="px-5 pt-8 pb-8 btn-gradient rounded-b-3xl shadow-lg mb-6 relative">
+      <div className="px-5 pt-10 pb-7 rounded-b-3xl shadow-lg mb-6 relative" style={{ background: 'linear-gradient(135deg,#0f172a,#1e3a8a)' }}>
         <button
           onClick={goBack}
-          className="text-white/80 hover:text-white mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium"
+          className="flex items-center gap-2 text-white/80 hover:text-white mb-5 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-inter font-medium">Back</span>
         </button>
-        <h1 className="text-xl font-poppins font-semibold text-white">Readiness Analysis</h1>
-        <p className="text-white/80 text-xs font-inter mt-1.5 font-medium">
-          Official metrics for your voting preparation
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-poppins font-bold text-white">Readiness Analysis</h1>
+            <p className="text-white/70 text-xs font-inter mt-1">Your official voting preparation metrics</p>
+          </div>
+          <InfoButton
+            text="Your Readiness Score is calculated from 4 key milestones: Voter Registration, Detail Verification, ID Document check, and Polling Booth location. Complete all steps to reach 100%."
+            title="Readiness Score"
+          />
+        </div>
       </div>
 
       <div className="px-4 py-4 space-y-4">

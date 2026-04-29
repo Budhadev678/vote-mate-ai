@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, TrendingUp, Users, AlertCircle } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { InfoButtonLight } from '../components/InfoButton'
 
 const COMMUNITY_STATS = {
   totalUsers: 1284,
@@ -31,19 +32,23 @@ export function CommunityScreen() {
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">
       {/* Header */}
-      <div className="px-5 pt-8 pb-8 bg-white border-b border-slate-200 shadow-sm">
-        <button onClick={goBack} className="text-slate-500 hover:text-slate-800 mb-6 flex items-center gap-1.5 text-sm font-inter transition-colors font-medium">
-          <ArrowLeft className="w-4 h-4" /> Back
+      <div className="px-5 pt-10 pb-6 bg-white border-b border-slate-100 shadow-sm">
+        <button onClick={goBack} className="flex items-center gap-2 text-slate-500 hover:text-slate-800 mb-5 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="text-sm font-inter font-medium">Back</span>
         </button>
-        <h1 className="text-xl font-poppins font-semibold text-slate-900">Community Insights</h1>
-        <p className="text-slate-500 text-xs font-inter mt-1.5 font-medium">
-          Aggregated preparation metrics in your region
-        </p>
-        <div className="flex items-center gap-2 mt-4">
-          <Users className="w-4 h-4 text-slate-400" />
-          <span className="text-slate-400 text-[10px] font-inter font-bold uppercase tracking-widest">
-            {COMMUNITY_STATS.totalUsers.toLocaleString()} active voters
-          </span>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-poppins font-bold text-slate-900">Community Insights</h1>
+            <div className="flex items-center gap-2 mt-1.5">
+              <Users className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-slate-400 text-[11px] font-inter font-semibold">{COMMUNITY_STATS.totalUsers.toLocaleString()} active voters tracked</span>
+            </div>
+          </div>
+          <InfoButtonLight
+            text="Community data is anonymized and aggregated from voters in your region. No personal information is shared or stored. Data helps identify common preparation gaps."
+            title="About This Data"
+          />
         </div>
       </div>
 

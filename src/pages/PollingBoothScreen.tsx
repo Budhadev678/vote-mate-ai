@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Navigation, Share2, Clock, Search, Locate } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { InfoButton } from '../components/InfoButton'
 
 // ─── Mock booth data ──────────────────────────────────────────────
 const MOCK_BOOTH = {
@@ -55,8 +56,14 @@ export function PollingBoothScreen() {
               <h1 className="text-2xl font-poppins font-bold text-white">Find Your Booth</h1>
               <p className="text-white/70 text-xs font-inter mt-1">Locate your assigned polling station</p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-2xl">
-              📍
+            <div className="flex items-center gap-2">
+              <InfoButton
+                text="Your polling booth is the official station assigned to your registered address. Always carry a valid photo ID (Voter ID, Aadhaar, Passport, etc.) when visiting. Booth numbers are assigned by the Election Commission of India."
+                title="About Polling Booth"
+              />
+              <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center text-2xl">
+                📍
+              </div>
             </div>
           </div>
         </div>
