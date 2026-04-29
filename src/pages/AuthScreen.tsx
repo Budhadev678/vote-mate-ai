@@ -4,7 +4,7 @@ import { ArrowRight, Lock, Phone } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
 export function AuthScreen() {
-  const { login } = useStore()
+  const { login, navigate, user } = useStore()
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
@@ -25,6 +25,7 @@ export function AuthScreen() {
     setTimeout(() => {
       setLoading(false)
       login(phone)
+      navigate(user.onboardingComplete ? 'dashboard' : 'onboarding')
     }, 1200)
   }
 
@@ -36,14 +37,14 @@ export function AuthScreen() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
       >
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div
-            className="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center text-4xl shadow-sm border border-slate-100 bg-white mb-6"
+            className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-slate-100 bg-white mb-5"
           >
             🔐
           </div>
           <h1 className="text-2xl font-poppins font-semibold text-slate-900">Secure Access</h1>
-          <p className="text-sm font-inter text-slate-500 mt-2">Sign in to VoteMate AI securely</p>
+          <p className="text-sm font-inter text-slate-500 mt-1.5">Sign in to VoteMate AI securely</p>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
@@ -114,8 +115,9 @@ export function AuthScreen() {
                       maxLength={4}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                      placeholder="••••"
-                      className="flex-1 tracking-[1em] text-center bg-transparent text-xl font-poppins font-bold text-slate-900 placeholder-slate-300 focus:outline-none"
+                      placeholder="• • • •"
+                      className="w-full text-center bg-transparent text-2xl font-poppins font-bold text-slate-900 tracking-[0.3em] placeholder-slate-300 focus:outline-none"
+                      style={{ paddingLeft: '0.3em' }} // Counteracts the tracking for perfect centering
                     />
                   </div>
                 </div>

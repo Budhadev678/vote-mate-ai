@@ -200,30 +200,25 @@ export function PollingBoothScreen() {
                     isCurrent ? 'bg-indigo-50 border border-indigo-200' : ''
                   }`}
                 >
-                  <span className="text-base w-5">{slot.emoji}</span>
-                  <div className="w-20 flex-shrink-0">
+                  <span className="text-base w-5 hidden sm:block">{slot.emoji}</span>
+                  <div className="w-16 sm:w-20 flex-shrink-0">
                     <p className="text-xs font-inter text-gray-700 font-medium">{slot.time}</p>
                   </div>
-                  <div className="flex-1 bg-gray-100 rounded-full h-2.5">
+                  <div className="flex-1 bg-gray-100 rounded-full h-2.5 relative flex items-center">
                     <motion.div
                       className={`h-2.5 rounded-full ${barColor}`}
                       initial={{ width: 0 }}
                       animate={{ width: barW }}
                       transition={{ delay: i * 0.08, duration: 0.6 }}
                     />
+                    {(slot.best || slot.worst) && (
+                      <span className={`absolute -top-1.5 right-0 text-[8px] px-1.5 py-0.5 rounded-full font-inter font-bold shadow-sm ${slot.best ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {slot.best ? 'Best' : 'Busy'}
+                      </span>
+                    )}
                   </div>
                   <div className="w-14 flex-shrink-0 text-right">
-                    {slot.best ? (
-                      <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-inter font-bold">
-                        Best
-                      </span>
-                    ) : slot.worst ? (
-                      <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-inter font-bold">
-                        Busy
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-inter text-slate-500 font-medium">{slot.wait}</span>
-                    )}
+                    <span className="text-[10px] font-inter text-slate-500 font-semibold">{slot.wait}</span>
                   </div>
                 </div>
               )
