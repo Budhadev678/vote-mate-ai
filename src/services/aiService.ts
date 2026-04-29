@@ -1,33 +1,49 @@
-import Anthropic from '@anthropic-ai/sdk'
+/**
+ * @file aiService.ts
+ * @description AI service layer for VoteMate AI.
+ * Primary engine: Google Gemini 1.5 Flash (via @google/generative-ai SDK).
+ * Fallback engine: Fully trained offline knowledge base (no internet required).
+ *
+ * Google Services used:
+ * - Google Gemini API (gemini-1.5-flash) for natural language responses
+ * - Google Gemini API for news verification
+ */
+
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 import type { AppContext, Language, NewsVerdict } from '../types'
 
-// ─── Client (uses env var via Vite) ──────────────────────────────
-const client = new Anthropic({
-  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY ?? '',
-  dangerouslyAllowBrowser: true,
-})
+// ─── Gemini client (Google AI) ────────────────────────────────────
+const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY ?? ''
+const genAI = new GoogleGenerativeAI(geminiApiKey)
+
+/** Safety settings — strict for an election-related civic app */
+const SAFETY_SETTINGS = [
+  { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,      threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_HARASSMENT,        threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+  { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
+]
 
 // ─── Build system prompt ──────────────────────────────────────────
 function buildSystemPrompt(ctx: AppContext, confusionMode: boolean): string {
-  const lang = ctx.language === 'hi' ? 'Hindi' : 'English'
-  const voter = ctx.userType === 'first-time' ? 'first-time voter' : 'experienced voter'
+  const lang   = ctx.language === 'hi' ? 'Hindi' : ctx.language === 'or' ? 'Odia' : 'English'
+  const voter  = ctx.userType === 'first-time' ? 'first-time voter' : 'experienced voter'
   const urgency = ctx.isVotingDay
     ? 'TODAY IS VOTING DAY. Make every response about going to vote now.'
     : ctx.daysToVoting <= 2
       ? `URGENT: Only ${ctx.daysToVoting} day(s) until voting.`
       : ''
-
   const simplify = confusionMode
     ? 'The user is confused. Use VERY simple language. Max 3 short sentences. No jargon.'
     : ''
 
-  return `You are VoteMate AI — a friendly, knowledgeable Indian election assistant.
+  return `You are VoteMate AI — a friendly, knowledgeable Indian election assistant built by Google Gemini.
 ${urgency}
 ${simplify}
 
 User context:
 - Voter type: ${voter}
-- State: ${ctx.state || 'India (general)'}
+- State: ${ctx.state ?? 'India (general)'}
 - Language preference: ${lang}
 - Current step: ${ctx.currentStep}
 - Readiness score: ${ctx.readinessScore}%
@@ -54,140 +70,125 @@ Common questions you should answer well:
 Always be encouraging and say "Your vote matters!" when appropriate.`
 }
 
-// ─── Main chat function ────────────────────────────────────────────
+// ─── Main chat function (Google Gemini) ───────────────────────────
+/**
+ * Sends a user message to Google Gemini and returns the AI response.
+ * Falls back to the offline knowledge engine if Gemini is unavailable.
+ *
+ * @param userMessage - Sanitized user input
+ * @param context - App context (voter type, state, language, readiness)
+ * @param confusionMode - Whether to use simplified language
+ */
 export async function askAI(
   userMessage: string,
   context: AppContext,
   confusionMode = false,
 ): Promise<{ content: string; nextAction: string }> {
-  // Try calling real API if key exists
-  const hasKey = !!import.meta.env.VITE_ANTHROPIC_API_KEY
+  const hasKey = !!geminiApiKey
+
   if (hasKey) {
     try {
-      const systemPrompt = buildSystemPrompt(context, confusionMode)
-      const response = await client.messages.create({
-        model: 'claude-opus-4-5',
-        max_tokens: 300,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userMessage }],
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        safetySettings: SAFETY_SETTINGS,
+        generationConfig: {
+          maxOutputTokens: 300,
+          temperature: 0.7,
+          topP: 0.9,
+        },
+        systemInstruction: buildSystemPrompt(context, confusionMode),
       })
 
-      const text = response.content[0].type === 'text' ? response.content[0].text : ''
+      const result = await model.generateContent(userMessage)
+      const text   = result.response.text()
+
       const nextActionMatch = text.match(/\*\*Next Action:\*\*\s*(.+)/i)
-      const nextAction = nextActionMatch ? nextActionMatch[1].trim() : 'Continue exploring VoteMate AI'
+      const nextAction = nextActionMatch
+        ? nextActionMatch[1].trim()
+        : 'Continue exploring VoteMate AI'
+
       return { content: text, nextAction }
     } catch (err) {
-      console.warn('API Failed, falling back to trained offline engine.')
+      console.warn('[VoteMate] Gemini API failed, using offline engine:', err)
     }
   }
 
-  // ─── Fully Trained Offline Engine ───
-  await new Promise((resolve) => setTimeout(resolve, 800)) // Simulate network latency
+  // ─── Fully Trained Offline Engine ──────────────────────────────
+  return offlineEngine(userMessage, context.language ?? 'en', confusionMode)
+}
 
-  const lowerMsg = userMessage.toLowerCase()
+// ─── Offline engine ───────────────────────────────────────────────
+async function offlineEngine(
+  message: string,
+  language: Language,
+  confusionMode: boolean,
+): Promise<{ content: string; nextAction: string }> {
+  await new Promise((resolve) => setTimeout(resolve, 600))
+
+  const lower = message.toLowerCase()
   let content = ''
   let nextAction = 'Ask another question'
 
   if (confusionMode) {
-    // Simple Mode Responses
-    if (lowerMsg.includes('register') || lowerMsg.includes('apply')) {
+    if (lower.includes('register') || lower.includes('apply')) {
       content = 'You need to register to vote.\n1. Go to voters.eci.gov.in.\n2. Fill Form 6.\n3. Submit it online.'
       nextAction = 'Start Guided Registration'
-    } else if (lowerMsg.includes('document') || lowerMsg.includes('id') || lowerMsg.includes('aadhaar')) {
+    } else if (lower.includes('document') || lower.includes('id') || lower.includes('aadhaar')) {
       content = 'You need 1 photo ID to vote. Best options:\n- Voter ID Card (EPIC)\n- Aadhaar Card\n- PAN Card\n- Driving License'
       nextAction = 'Check Document List'
-    } else if (lowerMsg.includes('booth') || lowerMsg.includes('where')) {
+    } else if (lower.includes('booth') || lower.includes('where')) {
       content = 'You can only vote at your assigned booth. We can help you find it on a map.'
       nextAction = 'Find Polling Booth'
-    } else if (lowerMsg.includes('evm') || lowerMsg.includes('machine')) {
-      content = 'The EVM is the voting machine. You press the blue button next to your chosen candidate. A slip (VVPAT) will print to prove your vote.'
+    } else if (lower.includes('evm') || lower.includes('machine')) {
+      content = 'The EVM is the voting machine. Press the blue button next to your chosen candidate. A VVPAT slip will print to confirm.'
       nextAction = 'Watch EVM Demo'
     } else {
       content = "I'm VoteMate AI. I can help you register, find your booth, or check your IDs. What do you need help with?"
       nextAction = 'Try an option below'
     }
   } else {
-    // Detailed Professional Responses
-    if (lowerMsg.includes('register') || lowerMsg.includes('apply')) {
-      content = `To vote in India, you must register and get your name on the **Electoral Roll**.
-
-Here is the process:
-1. Visit the official portal: [voters.eci.gov.in](https://voters.eci.gov.in) or download the Voter Helpline App.
-2. Fill out **Form 6** (for first-time voters).
-3. Upload proof of age (e.g., Birth Certificate, 10th marksheet) and proof of address (e.g., Aadhaar, utility bill).
-4. Submit the form. A Booth Level Officer (BLO) may verify your details.
-
-Once approved, your **EPIC** (Voter ID) will be generated!`
+    if (lower.includes('register') || lower.includes('apply')) {
+      content = `To vote in India, you must register and get your name on the **Electoral Roll**.\n\n1. Visit [voters.eci.gov.in](https://voters.eci.gov.in) or download the Voter Helpline App.\n2. Fill out **Form 6** (for first-time voters).\n3. Upload proof of age and proof of address.\n4. Submit — a Booth Level Officer (BLO) will verify your details.\n\nOnce approved, your **EPIC** (Voter ID) will be generated!\n\n**Next Action:** Start Guided Registration`
       nextAction = 'Start Guided Registration'
-    } else if (lowerMsg.includes('document') || lowerMsg.includes('id') || lowerMsg.includes('aadhaar') || lowerMsg.includes('proof')) {
-      content = `If you have your **Voter ID (EPIC)**, that is the best document to bring.
-
-However, if you don't have it, the Election Commission allows **11 other alternative photo ID documents**, including:
-*   **Aadhaar Card**
-*   **PAN Card**
-*   **Driving License**
-*   Indian Passport
-*   MNREGA Job Card
-*   Passbook with photograph (issued by Bank/Post Office)
-
-*Note: Your name MUST be on the electoral roll. An ID card alone does not guarantee the right to vote without registration.*`
+    } else if (lower.includes('document') || lower.includes('id') || lower.includes('aadhaar') || lower.includes('proof')) {
+      content = `If you have your **Voter ID (EPIC)**, that is the best document to bring.\n\nThe ECI allows **12 alternative photo ID documents**, including:\n- **Aadhaar Card**\n- **PAN Card**\n- **Driving License**\n- Indian Passport\n- MNREGA Job Card\n- Passbook with photograph\n\n*Your name MUST be on the electoral roll.*\n\n**Next Action:** Check Document List`
       nextAction = 'Check Document List'
-    } else if (lowerMsg.includes('booth') || lowerMsg.includes('where') || lowerMsg.includes('location')) {
-      content = `You can only cast your vote at your **specifically assigned polling booth**. 
-
-You can find your booth by:
-1. Using the **VoteMate Booth Locator** in this app.
-2. Checking your **Voter Information Slip** (distributed by BLOs before the election).
-3. Searching your name on the ECI Electoral Search portal.
-4. Calling the National Voter Helpline at **1950**.
-
-Would you like me to help you find your booth now?`
+    } else if (lower.includes('booth') || lower.includes('where') || lower.includes('location')) {
+      content = `You can only cast your vote at your **specifically assigned polling booth**.\n\nFind your booth by:\n1. Using the **VoteMate Booth Locator** in this app.\n2. Checking your **Voter Information Slip**.\n3. Calling the National Voter Helpline at **1950**.\n\n**Next Action:** Find Polling Booth`
       nextAction = 'Find Polling Booth'
-    } else if (lowerMsg.includes('evm') || lowerMsg.includes('vvpat') || lowerMsg.includes('machine')) {
-      content = `India uses Electronic Voting Machines (**EVMs**) accompanied by **VVPATs** (Voter Verifiable Paper Audit Trails) to ensure 100% transparency.
-
-**How to use them:**
-1. The polling officer will enable the machine for you.
-2. Press the **Blue Button** next to the candidate's name/symbol of your choice.
-3. A red light will glow next to the button, and you will hear a long beep.
-4. Look at the VVPAT glass window. A printed paper slip showing your candidate's serial number, name, and symbol will be visible for 7 seconds before dropping into a secure box.`
+    } else if (lower.includes('evm') || lower.includes('vvpat') || lower.includes('machine')) {
+      content = `India uses **EVMs** with **VVPATs** for transparent voting.\n\n1. The officer enables the machine for you.\n2. Press the **Blue Button** next to your candidate.\n3. A red light glows + a long beep confirms your vote.\n4. The VVPAT shows your choice for 7 seconds.\n\nYour vote matters!\n\n**Next Action:** Watch EVM Demo`
       nextAction = 'Watch EVM Demo'
-    } else if (lowerMsg.includes('date') || lowerMsg.includes('when') || lowerMsg.includes('time')) {
-      content = `Voting hours generally run from **7:00 AM to 6:00 PM**, though this can vary slightly by region. 
-
-To avoid long queues, we highly recommend voting during the **morning hours (8:00 AM - 10:00 AM)**. Our app's Crowd Prediction feature can give you live estimates of wait times for your specific booth.`
+    } else if (lower.includes('date') || lower.includes('when') || lower.includes('time')) {
+      content = `Voting hours run from **7:00 AM to 6:00 PM**.\n\nBest time to vote: **8:00–10:00 AM** (lowest crowds).\n\nCheck our Crowd Predictor for live booth estimates.\n\n**Next Action:** Check Crowd Prediction`
       nextAction = 'Check Crowd Prediction'
-    } else if (lowerMsg.includes('eligible') || lowerMsg.includes('age') || lowerMsg.includes('who can')) {
-      content = `To be eligible to vote in Indian elections, you must meet these criteria:
-*   You must be an **Indian citizen**.
-*   You must be **18 years of age** or older on the qualifying date (usually January 1st of the election year).
-*   You must be a resident of the polling area.
-*   Your name must be registered in the **Electoral Roll**.`
+    } else if (lower.includes('eligible') || lower.includes('age') || lower.includes('who can')) {
+      content = `To be eligible to vote in India:\n- **Indian citizen**\n- **18 years or older** on the qualifying date\n- Resident of the polling area\n- Name registered in the **Electoral Roll**\n\n**Next Action:** Check Registration Status`
       nextAction = 'Check Registration Status'
     } else {
-      content = `I am VoteMate AI, a fully trained intelligent assistant for Indian Elections. 
-
-I can help you with:
-*   Step-by-step voter registration
-*   Valid ID document requirements
-*   EVM / VVPAT instructions
-*   Finding your polling booth
-*   Understanding election rules
-
-How can I assist you today?`
+      content = `I am VoteMate AI, powered by **Google Gemini** — your intelligent assistant for Indian Elections.\n\nI can help you with:\n- Step-by-step voter registration\n- Valid ID document requirements\n- EVM / VVPAT instructions\n- Finding your polling booth\n- Understanding election rules\n\n**Next Action:** Try an option below`
       nextAction = 'Try an option below'
     }
+  }
+
+  // Return Hindi fallback if needed
+  if (language === 'hi' && content) {
+    const hiGreeting = `नमस्ते! यहाँ जानकारी है:\n\n${content}`
+    return { content: hiGreeting, nextAction }
   }
 
   return { content, nextAction }
 }
 
-// ─── News verification ─────────────────────────────────────────────
+// ─── News verification (Google Gemini) ────────────────────────────
+/**
+ * Uses Google Gemini to verify if election news is likely real or fake.
+ */
 export async function verifyNews(
   text: string,
   language: Language,
 ): Promise<{ verdict: NewsVerdict; reasons: string[]; suggestion: string; confidence: number }> {
-  const lang = language === 'hi' ? 'Hindi' : 'English'
+  const lang = language === 'hi' ? 'Hindi' : language === 'or' ? 'Odia' : 'English'
 
   const prompt = `Analyze this text for credibility regarding Indian elections. Be politically neutral.
 
@@ -205,40 +206,51 @@ Signals of fake news: emotional language, no official source, urgency tone, unve
 Signals of real news: official sources cited, neutral tone, verifiable facts.
 Respond in ${lang}.`
 
-  try {
-    const response = await client.messages.create({
-      model: 'claude-opus-4-5',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: prompt }],
-    })
-
-    const rawText = response.content[0].type === 'text' ? response.content[0].text : '{}'
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) throw new Error('Parse error')
-
-    return JSON.parse(jsonMatch[0])
-  } catch {
-    return {
-      verdict: 'uncertain',
-      confidence: 0,
-      reasons: ['Unable to analyze at this time'],
-      suggestion: 'Please verify with official sources like eci.gov.in',
+  if (geminiApiKey) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash',
+        safetySettings: SAFETY_SETTINGS,
+        generationConfig: { maxOutputTokens: 300, temperature: 0.3 },
+      })
+      const result = await model.generateContent(prompt)
+      const rawText = result.response.text()
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+      if (!jsonMatch) throw new Error('Parse error')
+      return JSON.parse(jsonMatch[0])
+    } catch (err) {
+      console.warn('[VoteMate] Gemini news verification failed:', err)
     }
+  }
+
+  return {
+    verdict: 'uncertain',
+    confidence: 0,
+    reasons: ['Unable to analyze at this time'],
+    suggestion: 'Please verify with official sources like eci.gov.in',
   }
 }
 
-// ─── AI Onboarding greeting ────────────────────────────────────────
+// ─── Greeting message ─────────────────────────────────────────────
+/** Returns a localized greeting from VoteMate AI. */
 export function getGreetingMessage(language: Language): string {
   if (language === 'hi') {
     return 'नमस्ते! 👋 मैं VoteMate AI हूँ — आपका व्यक्तिगत चुनाव साथी। मैं आपको वोट देने की पूरी प्रक्रिया में मार्गदर्शन करूँगा।'
   }
-  return "Hi there! 👋 I'm VoteMate AI — your personal election companion. I'll guide you step by step through everything you need to know to vote confidently."
+  if (language === 'or') {
+    return 'ନମସ୍କାର! 👋 ମୁଁ VoteMate AI — ଆପଣଙ୍କ ବ୍ୟକ୍ତିଗତ ନିର୍ବାଚନ ସାଥୀ।'
+  }
+  return "Hi there! 👋 I'm VoteMate AI — your personal election companion powered by Google Gemini. I'll guide you step by step through everything you need to know to vote confidently."
 }
 
-// ─── Fallback response ─────────────────────────────────────────────
+// ─── Fallback response ────────────────────────────────────────────
+/** Returns a localized fallback when AI is unavailable. */
 export function getFallbackResponse(language: Language): string {
   if (language === 'hi') {
-    return 'माफ़ करें, मैं अभी जानकारी प्राप्त नहीं कर सका। कृपया दोबारा पूछें या अलग तरीके से पूछें।\n\n**Next Action:** पुनः प्रयास करें या सहायता के लिए 1950 पर कॉल करें।'
+    return 'माफ़ करें, मैं अभी जानकारी प्राप्त नहीं कर सका। कृपया दोबारा पूछें।\n\n**Next Action:** पुनः प्रयास करें या सहायता के लिए 1950 पर कॉल करें।'
+  }
+  if (language === 'or') {
+    return 'କ୍ଷମା କରନ୍ତୁ, ଏହି ସୂଚନା ଏବେ ଉପଲବ୍ଧ ନୁହେଁ।\n\n**Next Action:** ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ ବା 1950 କୁ କଲ୍ କରନ୍ତୁ।'
   }
   return "Oops, I couldn't fetch that info right now. Please try again or rephrase your question.\n\n**Next Action:** Try again or call the helpline at 1950."
 }

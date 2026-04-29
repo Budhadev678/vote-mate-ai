@@ -264,3 +264,44 @@
     100% { background-position: 0% 50%; }
   }
 }
+
+/* ── Accessibility: Respect OS reduced-motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Specifically pause Framer Motion animations */
+  [data-framer-motion] {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .animated-bg {
+    animation: none !important;
+    background: #1e3a8a;
+  }
+}
+
+/* ── High contrast mode support ── */
+@media (prefers-contrast: high) {
+  :root {
+    --text-primary: #000000;
+    --text-secondary: #1a1a1a;
+    --border: #000000;
+    --bg-main: #ffffff;
+  }
+}
+
+/* ── Focus visible global style (keyboard navigation) ── */
+:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+

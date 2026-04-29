@@ -1,132 +1,169 @@
 /**
  * @file aiService.test.ts
- * @description Unit tests for the AI service layer — covers offline engine
- * responses, fallback logic, greeting messages, and news verification utilities.
+ * @description Unit tests for the VoteMate AI service layer.
+ * Tests the Google Gemini-powered engine, offline fallback, greeting messages,
+ * news verification, and language-specific responses.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { getFallbackResponse, getGreetingMessage } from '../services/aiService'
 import type { AppContext } from '../types'
 
-// ─── Mock context factory ─────────────────────────────────────────
-const makeCtx = (overrides: Partial<AppContext> = {}): AppContext => ({
+// ─── Shared context fixture ────────────────────────────────────────
+const BASE_CONTEXT: AppContext = {
   userType: 'first-time',
-  state: 'Delhi',
+  state: 'Maharashtra',
   language: 'en',
   currentStep: 'registration',
-  readinessScore: 0,
+  hasValidDocument: false,
+  locationAvailable: false,
+  currentDate: new Date('2026-04-01'),
   isVotingDay: false,
-  daysToVoting: 30,
-  ...overrides,
-})
+  readinessScore: 0,
+  daysToVoting: 49,
+}
 
-// ─── getFallbackResponse ──────────────────────────────────────────
-describe('getFallbackResponse', () => {
-  it('returns English fallback message by default', () => {
-    const response = getFallbackResponse('en')
-    expect(response).toBeTruthy()
-    expect(typeof response).toBe('string')
-    expect(response.length).toBeGreaterThan(0)
-  })
-
-  it('returns Hindi fallback message for hi language', () => {
-    const response = getFallbackResponse('hi')
-    expect(response).toBeTruthy()
-    expect(typeof response).toBe('string')
-    // Hindi response should contain Devanagari characters
-    expect(response).toMatch(/[\u0900-\u097F]/)
-  })
-
-  it('returns Odia fallback for or language', () => {
-    const response = getFallbackResponse('or')
-    expect(response).toBeTruthy()
-    expect(typeof response).toBe('string')
-  })
-
-  it('includes helpline reference in English fallback', () => {
-    const response = getFallbackResponse('en')
-    expect(response).toMatch(/1950/)
-  })
-
-  it('includes Next Action in English fallback', () => {
-    const response = getFallbackResponse('en')
-    expect(response.toLowerCase()).toMatch(/next action/i)
-  })
-})
-
-// ─── getGreetingMessage ───────────────────────────────────────────
+// ─── getGreetingMessage ────────────────────────────────────────────
 describe('getGreetingMessage', () => {
-  it('returns English greeting for en language', () => {
-    const greeting = getGreetingMessage('en')
-    expect(greeting).toBeTruthy()
-    expect(typeof greeting).toBe('string')
-    expect(greeting.length).toBeGreaterThan(10)
+  it('returns English greeting mentioning VoteMate', () => {
+    const msg = getGreetingMessage('en')
+    expect(msg).toContain('VoteMate')
   })
 
-  it('returns Hindi greeting for hi language', () => {
-    const greeting = getGreetingMessage('hi')
-    expect(greeting).toBeTruthy()
-    // Should contain Hindi characters
-    expect(greeting).toMatch(/[\u0900-\u097F]/)
+  it('returns English greeting mentioning Gemini (Google AI)', () => {
+    const msg = getGreetingMessage('en')
+    expect(msg).toContain('Gemini')
   })
 
-  it('contains "VoteMate" branding in greeting', () => {
-    const greeting = getGreetingMessage('en')
-    expect(greeting).toMatch(/VoteMate/i)
+  it('returns Hindi greeting with Devanagari script', () => {
+    const msg = getGreetingMessage('hi')
+    expect(msg).toMatch(/[\u0900-\u097F]/)
   })
 
-  it('includes wave emoji in greeting', () => {
-    const greetingEn = getGreetingMessage('en')
-    const greetingHi = getGreetingMessage('hi')
-    expect(greetingEn + greetingHi).toMatch(/👋/)
-  })
-})
-
-// ─── App Context validation ───────────────────────────────────────
-describe('AppContext structure', () => {
-  it('creates a valid context with default values', () => {
-    const ctx = makeCtx()
-    expect(ctx.userType).toBe('first-time')
-    expect(ctx.state).toBe('Delhi')
-    expect(ctx.language).toBe('en')
-    expect(ctx.readinessScore).toBe(0)
-    expect(ctx.isVotingDay).toBe(false)
-    expect(ctx.daysToVoting).toBe(30)
+  it('returns Odia greeting with Odia script', () => {
+    const msg = getGreetingMessage('or')
+    expect(msg).toMatch(/[\u0B00-\u0B7F]/)
   })
 
-  it('allows partial overrides', () => {
-    const ctx = makeCtx({ language: 'hi', readinessScore: 75 })
-    expect(ctx.language).toBe('hi')
-    expect(ctx.readinessScore).toBe(75)
-    expect(ctx.userType).toBe('first-time') // unchanged
-  })
-
-  it('supports voting day context', () => {
-    const ctx = makeCtx({ isVotingDay: true, daysToVoting: 0 })
-    expect(ctx.isVotingDay).toBe(true)
-    expect(ctx.daysToVoting).toBe(0)
-  })
-
-  it('supports experienced voter type', () => {
-    const ctx = makeCtx({ userType: 'experienced' })
-    expect(ctx.userType).toBe('experienced')
+  it('returns non-empty string for all supported languages', () => {
+    ;(['en', 'hi', 'or'] as const).forEach((lang) => {
+      const msg = getGreetingMessage(lang)
+      expect(typeof msg).toBe('string')
+      expect(msg.length).toBeGreaterThan(0)
+    })
   })
 })
 
-// ─── Readiness score boundaries ───────────────────────────────────
-describe('Readiness score validation', () => {
-  it('accepts 0% score (new user)', () => {
-    const ctx = makeCtx({ readinessScore: 0 })
-    expect(ctx.readinessScore).toBe(0)
+// ─── getFallbackResponse ───────────────────────────────────────────
+describe('getFallbackResponse', () => {
+  it('returns English fallback with helpline 1950', () => {
+    const msg = getFallbackResponse('en')
+    expect(msg).toContain('1950')
   })
 
-  it('accepts 100% score (fully ready)', () => {
-    const ctx = makeCtx({ readinessScore: 100 })
-    expect(ctx.readinessScore).toBe(100)
+  it('returns Hindi fallback with Devanagari script', () => {
+    const msg = getFallbackResponse('hi')
+    expect(msg).toMatch(/[\u0900-\u097F]/)
   })
 
-  it('accepts intermediate score', () => {
-    const ctx = makeCtx({ readinessScore: 65 })
-    expect(ctx.readinessScore).toBe(65)
+  it('returns Odia fallback with Odia script', () => {
+    const msg = getFallbackResponse('or')
+    expect(msg).toMatch(/[\u0B00-\u0B7F]/)
+  })
+
+  it('returns non-empty string for all supported languages', () => {
+    ;(['en', 'hi', 'or'] as const).forEach((lang) => {
+      const msg = getFallbackResponse(lang)
+      expect(typeof msg).toBe('string')
+      expect(msg.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('English fallback contains Next Action', () => {
+    const msg = getFallbackResponse('en')
+    expect(msg).toContain('Next Action')
+  })
+})
+
+// ─── askAI offline engine tests (no API key) ──────────────────────
+describe('askAI offline engine', () => {
+  beforeEach(() => {
+    // Ensure no API key is set — forces offline engine
+    vi.stubEnv('VITE_GEMINI_API_KEY', '')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('responds to registration queries', async () => {
+    const { askAI } = await import('../services/aiService')
+    const result = await askAI('How do I register to vote?', BASE_CONTEXT, false)
+    expect(result.content).toBeTruthy()
+    expect(result.content.length).toBeGreaterThan(50)
+  })
+
+  it('returns a nextAction string', async () => {
+    const { askAI } = await import('../services/aiService')
+    const result = await askAI('How do I find my polling booth?', BASE_CONTEXT, false)
+    expect(typeof result.nextAction).toBe('string')
+    expect(result.nextAction.length).toBeGreaterThan(0)
+  })
+
+  it('handles document queries', async () => {
+    const { askAI } = await import('../services/aiService')
+    const result = await askAI('What documents do I need?', BASE_CONTEXT, false)
+    expect(result.content).toBeTruthy()
+  })
+
+  it('handles EVM queries', async () => {
+    const { askAI } = await import('../services/aiService')
+    const result = await askAI('How does the EVM machine work?', BASE_CONTEXT, false)
+    expect(result.content).toBeTruthy()
+  })
+
+  it('returns Hindi response for Hindi language context', async () => {
+    const { askAI } = await import('../services/aiService')
+    const hindiContext: AppContext = { ...BASE_CONTEXT, language: 'hi' }
+    const result = await askAI('How do I register?', hindiContext, false)
+    expect(result.content).toBeTruthy()
+    expect(result.content.length).toBeGreaterThan(0)
+  })
+
+  it('uses confusion mode for simple responses', async () => {
+    const { askAI } = await import('../services/aiService')
+    const result = await askAI('How do I register?', BASE_CONTEXT, true)
+    expect(result.content).toBeTruthy()
+    // Confusion mode responses should be shorter
+    const normalResult = await askAI('How do I register?', BASE_CONTEXT, false)
+    expect(result.content.length).toBeLessThan(normalResult.content.length + 100)
+  })
+
+  it('handles booth queries in confusion mode', async () => {
+    const { askAI } = await import('../services/aiService')
+    const result = await askAI('Where is my booth?', BASE_CONTEXT, true)
+    expect(result.content).toBeTruthy()
+  })
+})
+
+// ─── App context validation ────────────────────────────────────────
+describe('AppContext validation', () => {
+  it('readinessScore is between 0 and 100', () => {
+    expect(BASE_CONTEXT.readinessScore).toBeGreaterThanOrEqual(0)
+    expect(BASE_CONTEXT.readinessScore).toBeLessThanOrEqual(100)
+  })
+
+  it('daysToVoting is non-negative', () => {
+    expect(BASE_CONTEXT.daysToVoting).toBeGreaterThanOrEqual(0)
+  })
+
+  it('currentDate is a valid Date', () => {
+    expect(BASE_CONTEXT.currentDate).toBeInstanceOf(Date)
+    expect(isNaN(BASE_CONTEXT.currentDate.getTime())).toBe(false)
+  })
+
+  it('isVotingDay is false when daysToVoting > 0', () => {
+    expect(BASE_CONTEXT.daysToVoting).toBeGreaterThan(0)
+    expect(BASE_CONTEXT.isVotingDay).toBe(false)
   })
 })

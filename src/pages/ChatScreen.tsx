@@ -154,20 +154,19 @@ export function ChatScreen() {
   )
 
   const handleVoice = useCallback(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition ?? window.webkitSpeechRecognition
     if (!SpeechRecognition) {
       alert('Voice input is not supported in this browser. Please type your question.')
       return
     }
     trackFeature('voice_input')
     const recognition = new SpeechRecognition()
-    recognition.lang = user.language === 'hi' ? 'hi-IN' : 'en-IN'
+    recognition.lang = user.language === 'hi' ? 'hi-IN' : user.language === 'or' ? 'or-IN' : 'en-IN'
     recognition.continuous = false
     recognition.interimResults = false
     recognition.onstart = () => setIsListening(true)
     recognition.onend = () => setIsListening(false)
-    recognition.onresult = (e: { results: { [key: number]: { [key: number]: { transcript: string } } } }) => {
+    recognition.onresult = (e: SpeechRecognitionEvent) => {
       const t = e.results[0][0].transcript
       setInput(t)
       sendMessage(t)

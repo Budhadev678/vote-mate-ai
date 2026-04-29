@@ -211,6 +211,11 @@ export const useStore = create<VoteMateStor>()(
         set((s) => {
           const next = { ...s.user, ...updates, lastActiveTime: Date.now() }
           next.readinessScore = calcReadiness(next)
+          // Sync document lang attribute for screen reader accessibility
+          if (updates.language) {
+            const langMap: Record<string, string> = { en: 'en-IN', hi: 'hi-IN', or: 'or-IN' }
+            document.documentElement.lang = langMap[updates.language] ?? 'en-IN'
+          }
           return { user: next, recommendations: buildRecommendations(next) }
         }),
       completeStep: (step) =>
@@ -296,11 +301,11 @@ export const useStore = create<VoteMateStor>()(
     }),
     {
       name: 'votemate-store',
-      partialState: (s: any) => ({
+      partialState: (s: VoteMateStor) => ({
         user: s.user,
-        messages: s.messages?.slice(-50) || [],
-        familyMembers: s.familyMembers || [],
-        onboardingStep: s.onboardingStep || 0,
+        messages: s.messages?.slice(-50) ?? [],
+        familyMembers: s.familyMembers ?? [],
+        onboardingStep: s.onboardingStep ?? 0,
       }),
     }
   ),

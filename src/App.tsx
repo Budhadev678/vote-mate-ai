@@ -1,33 +1,66 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, lazy, Suspense } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore } from './store/useStore'
 import { useAnalytics } from './hooks/useAnalytics'
+import type { Screen } from './types'
 
-// ── Screens ────────────────────────────────────────────────────────
-import { LandingScreen } from './pages/LandingScreen'
-import { OnboardingScreen } from './pages/OnboardingScreen'
-import { DashboardScreen } from './pages/DashboardScreen'
-import { ChatScreen } from './pages/ChatScreen'
-import { GuidedScreen } from './pages/GuidedScreen'
-import { QuickModeScreen } from './pages/QuickModeScreen'
-import { TimelineScreen } from './pages/TimelineScreen'
-import { GlossaryScreen } from './pages/GlossaryScreen'
-import { PollingBoothScreen } from './pages/PollingBoothScreen'
-import { VerifyNewsScreen } from './pages/VerifyNewsScreen'
-import { DocumentCheckerScreen } from './pages/DocumentCheckerScreen'
-import { CrowdPredictionScreen } from './pages/CrowdPredictionScreen'
-import { FamilyScreen } from './pages/FamilyScreen'
-import { CommunityScreen } from './pages/CommunityScreen'
-import { InsightsScreen } from './pages/InsightsScreen'
-import { ProfileScreen } from './pages/ProfileScreen'
-import { AuthScreen } from './pages/AuthScreen'
-import { ReportViolationScreen } from './pages/ReportViolationScreen'
-import { CandidatesScreen } from './pages/CandidatesScreen'
-import { AccessibilityScreen } from './pages/AccessibilityScreen'
+// ── Screens (lazy-loaded for code splitting) ───────────────────────
+const LandingScreen         = lazy(() => import('./pages/LandingScreen').then(m => ({ default: m.LandingScreen })))
+const OnboardingScreen      = lazy(() => import('./pages/OnboardingScreen').then(m => ({ default: m.OnboardingScreen })))
+const DashboardScreen       = lazy(() => import('./pages/DashboardScreen').then(m => ({ default: m.DashboardScreen })))
+const ChatScreen            = lazy(() => import('./pages/ChatScreen').then(m => ({ default: m.ChatScreen })))
+const GuidedScreen          = lazy(() => import('./pages/GuidedScreen').then(m => ({ default: m.GuidedScreen })))
+const QuickModeScreen       = lazy(() => import('./pages/QuickModeScreen').then(m => ({ default: m.QuickModeScreen })))
+const TimelineScreen        = lazy(() => import('./pages/TimelineScreen').then(m => ({ default: m.TimelineScreen })))
+const GlossaryScreen        = lazy(() => import('./pages/GlossaryScreen').then(m => ({ default: m.GlossaryScreen })))
+const PollingBoothScreen    = lazy(() => import('./pages/PollingBoothScreen').then(m => ({ default: m.PollingBoothScreen })))
+const VerifyNewsScreen      = lazy(() => import('./pages/VerifyNewsScreen').then(m => ({ default: m.VerifyNewsScreen })))
+const DocumentCheckerScreen = lazy(() => import('./pages/DocumentCheckerScreen').then(m => ({ default: m.DocumentCheckerScreen })))
+const CrowdPredictionScreen = lazy(() => import('./pages/CrowdPredictionScreen').then(m => ({ default: m.CrowdPredictionScreen })))
+const FamilyScreen          = lazy(() => import('./pages/FamilyScreen').then(m => ({ default: m.FamilyScreen })))
+const CommunityScreen       = lazy(() => import('./pages/CommunityScreen').then(m => ({ default: m.CommunityScreen })))
+const InsightsScreen        = lazy(() => import('./pages/InsightsScreen').then(m => ({ default: m.InsightsScreen })))
+const ProfileScreen         = lazy(() => import('./pages/ProfileScreen').then(m => ({ default: m.ProfileScreen })))
+const AuthScreen            = lazy(() => import('./pages/AuthScreen').then(m => ({ default: m.AuthScreen })))
+const ReportViolationScreen = lazy(() => import('./pages/ReportViolationScreen').then(m => ({ default: m.ReportViolationScreen })))
+const CandidatesScreen      = lazy(() => import('./pages/CandidatesScreen').then(m => ({ default: m.CandidatesScreen })))
+const AccessibilityScreen   = lazy(() => import('./pages/AccessibilityScreen').then(m => ({ default: m.AccessibilityScreen })))
 
-// ── Layout components ──────────────────────────────────────────────
+// ── Layout components (not lazy — always needed) ───────────────────
 import { BottomNav } from './components/BottomNav'
 import { FloatingBot } from './components/FloatingBot'
+
+// ── Suspense loading fallback ──────────────────────────────────────
+function ScreenLoader() {
+  return (
+    <div
+      className="flex-1 flex items-center justify-center bg-slate-50"
+      role="status"
+      aria-label="Loading screen"
+      aria-live="polite"
+    >
+      <div className="flex flex-col items-center gap-3">
+        <div
+          className="w-10 h-10 rounded-2xl flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg,#1e3a8a,#4f46e5)' }}
+          aria-hidden="true"
+        >
+          🗳️
+        </div>
+        <div className="flex gap-1" aria-hidden="true">
+          {[0,1,2].map(i => (
+            <div
+              key={i}
+              className="w-1.5 h-1.5 rounded-full bg-indigo-400"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </div>
+        <span className="sr-only">Loading…</span>
+      </div>
+    </div>
+  )
+}
 
 // ── Transition wrapper ─────────────────────────────────────────────
 function PageTransition({ children, screenKey }: { children: React.ReactNode; screenKey: string }) {
@@ -79,7 +112,7 @@ function App() {
         useStore.setState((s) => {
           const newHistory = [...s.screenHistory]
           newHistory.pop()
-          return { currentScreen: hashScreen as any, screenHistory: newHistory }
+          return { currentScreen: hashScreen as Screen, screenHistory: newHistory }
         })
       }
     }
@@ -175,7 +208,9 @@ function App() {
         aria-label="VoteMate AI main content"
         className="flex-1 min-h-0 flex flex-col w-full relative overflow-hidden"
       >
-        <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
+        <Suspense fallback={<ScreenLoader />}>
+          <PageTransition screenKey={currentScreen}>{renderScreen()}</PageTransition>
+        </Suspense>
       </main>
 
       {/* Bottom navigation */}
