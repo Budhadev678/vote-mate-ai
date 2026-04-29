@@ -57,6 +57,34 @@ function App() {
     }
   }, [currentScreen])
 
+  // ── Sync Browser History for Hardware Back Button ────────────────
+  useEffect(() => {
+    const currentHash = `#${currentScreen}`
+    if (window.location.hash !== currentHash) {
+      window.history.pushState(null, '', currentHash)
+    }
+  }, [currentScreen])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const hashScreen = window.location.hash.replace('#', '')
+      if (hashScreen && hashScreen !== useStore.getState().currentScreen) {
+        useStore.setState((s) => {
+          const newHistory = [...s.screenHistory]
+          newHistory.pop()
+          return { currentScreen: hashScreen as any, screenHistory: newHistory }
+        })
+      }
+    }
+    
+    if (!window.location.hash) {
+       window.history.replaceState(null, '', `#${currentScreen}`)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
+
   // ── Offline detection ──────────────────────────────────────────
   useEffect(() => {
     const handleOnline = () => setOffline(false)
