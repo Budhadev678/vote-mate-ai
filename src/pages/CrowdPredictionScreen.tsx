@@ -77,8 +77,8 @@ export function CrowdPredictionScreen() {
           <p className="text-[10px] font-inter font-bold text-slate-400 uppercase tracking-widest mb-6">
             Hourly Density Projection
           </p>
-          <div className="h-40">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-40" style={{ minHeight: 160 }}>
+            <ResponsiveContainer width="100%" height={160}>
               <BarChart data={CROWD_DATA} margin={{ top: 0, right: 0, left: -40, bottom: 0 }}>
                 <XAxis
                   dataKey="time"

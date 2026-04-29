@@ -116,15 +116,15 @@ export function createRateLimiter(maxCalls: number, windowMs: number) {
  */
 export function validateEnvironment(): void {
   const requiredVars = [
-    'VITE_ANTHROPIC_API_KEY',
+    'VITE_GEMINI_API_KEY',
   ]
   const missingVars = requiredVars.filter(
     (key) => !import.meta.env[key],
   )
   if (missingVars.length > 0) {
     console.warn(
-      `[VoteMate Security] Missing env vars: ${missingVars.join(', ')}. ` +
-      'The offline engine will be used as fallback.',
+      `[VoteMate] Missing env vars: ${missingVars.join(', ')}. ` +
+      'The offline engine will be used as fallback. Add VITE_GEMINI_API_KEY to Vercel env settings for live AI.',
     )
   }
 }

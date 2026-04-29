@@ -97,8 +97,8 @@ export function InsightsScreen() {
               Weekly Progress Trend
             </p>
           </div>
-          <div className="h-[120px]">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-[120px]" style={{ minHeight: 120 }}>
+            <ResponsiveContainer width="100%" height={120}>
               <LineChart data={history} margin={{ top: 5, right: 5, left: -30, bottom: 0 }}>
                 <XAxis
                   dataKey="day"

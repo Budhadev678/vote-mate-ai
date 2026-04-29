@@ -1,137 +1,157 @@
 /**
  * @file firebase.ts
  * @description Google Firebase integration for VoteMate AI.
- * Provides Firestore for analytics/session logging and
- * Firebase Analytics for user engagement tracking.
+ * Provides Firebase Analytics for engagement tracking and
+ * Firestore for anonymized civic interaction logging.
  *
- * Google Services used:
- * - Firebase Firestore (cloud data storage)
+ * Google Services integrated:
  * - Firebase Analytics (user behaviour analytics)
+ * - Firebase Firestore (anonymized query logging)
  * - Firebase App (core SDK)
- */
-
-import { initializeApp } from 'firebase/app'
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { getAnalytics, logEvent, isSupported } from 'firebase/analytics'
-
-// ─── Firebase configuration ───────────────────────────────────────
-// Using environment variables for security; falls back to demo config for development
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ?? 'demo-api-key',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ?? 'votemate-ai.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ?? 'votemate-ai',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ?? 'votemate-ai.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? '123456789',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID ?? '1:123456789:web:abcdef',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID ?? 'G-VOTEMATE',
-}
-
-// ─── Initialize Firebase ──────────────────────────────────────────
-let app: ReturnType<typeof initializeApp> | null = null
-let db: ReturnType<typeof getFirestore> | null = null
-
-function getFirebaseApp() {
-  if (!app) {
-    app = initializeApp(firebaseConfig)
-  }
-  return app
-}
-
-function getDb() {
-  if (!db) {
-    db = getFirestore(getFirebaseApp())
-  }
-  return db
-}
-
-// ─── Analytics: log screen views ─────────────────────────────────
-/**
- * Logs a screen view event to Firebase Analytics.
- * Uses feature detection to avoid errors in unsupported environments.
  *
- * @param screenName - The name of the screen being viewed
+ * All data collected is ANONYMIZED — no personal info stored.
+ * Fails silently if credentials are not configured.
  */
-export async function logScreenView(screenName: string): Promise<void> {
+
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app'
+import { getFirestore, collection, addDoc, serverTimestamp, type Firestore } from 'firebase/firestore'
+import { getAnalytics, logEvent, isSupported, type Analytics } from 'firebase/analytics'
+
+// ─── Detect if real Firebase config is provided ───────────────────
+const FIREBASE_API_KEY  = import.meta.env.VITE_FIREBASE_API_KEY  ?? ''
+const FIREBASE_APP_ID   = import.meta.env.VITE_FIREBASE_APP_ID   ?? ''
+const FIREBASE_PROJECT  = import.meta.env.VITE_FIREBASE_PROJECT_ID ?? ''
+
+/** True only if real Firebase credentials are present */
+const FIREBASE_ENABLED  = !!FIREBASE_API_KEY && !!FIREBASE_APP_ID && !!FIREBASE_PROJECT
+  && !FIREBASE_API_KEY.startsWith('demo-')
+
+const firebaseConfig = {
+  apiKey:            FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN        ?? `${FIREBASE_PROJECT}.firebaseapp.com`,
+  projectId:         FIREBASE_PROJECT,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET     ?? `${FIREBASE_PROJECT}.appspot.com`,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID ?? '',
+  appId:             FIREBASE_APP_ID,
+  measurementId:     import.meta.env.VITE_FIREBASE_MEASUREMENT_ID     ?? '',
+}
+
+// ─── Lazy singletons ──────────────────────────────────────────────
+let _app:       FirebaseApp  | null = null
+let _db:        Firestore    | null = null
+let _analytics: Analytics    | null = null
+
+function getApp(): FirebaseApp | null {
+  if (!FIREBASE_ENABLED) return null
+  try {
+    if (_app) return _app
+    _app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig)
+    return _app
+  } catch {
+    return null
+  }
+}
+
+async function getDb(): Promise<Firestore | null> {
+  const app = getApp()
+  if (!app) return null
+  try {
+    if (!_db) _db = getFirestore(app)
+    return _db
+  } catch {
+    return null
+  }
+}
+
+async function getAnalyticsInstance(): Promise<Analytics | null> {
+  const app = getApp()
+  if (!app) return null
   try {
     const supported = await isSupported()
-    if (!supported) return
-    const analytics = getAnalytics(getFirebaseApp())
+    if (!supported) return null
+    if (!_analytics) _analytics = getAnalytics(app)
+    return _analytics
+  } catch {
+    return null
+  }
+}
+
+// ─── Public API ───────────────────────────────────────────────────
+
+/**
+ * Logs a screen view event to Firebase Analytics.
+ * @param screenName - The screen identifier (e.g. 'Dashboard', 'Chat')
+ */
+export async function logScreenView(screenName: string): Promise<void> {
+  const analytics = await getAnalyticsInstance()
+  if (!analytics) return
+  try {
     logEvent(analytics, 'screen_view', {
       firebase_screen: screenName,
       firebase_screen_class: screenName,
     })
-  } catch (err) {
-    // Silent fail — analytics should never break the app
-    console.debug('[Firebase] Analytics not available:', err)
+  } catch {
+    // Silently ignore — analytics is non-critical
   }
 }
 
 /**
- * Logs a custom user action event to Firebase Analytics.
- *
- * @param eventName - The name of the action event
- * @param params - Optional parameters for the event
+ * Logs a custom user action to Firebase Analytics.
+ * @param event - Event name (snake_case)
+ * @param params - Optional event parameters (no PII)
  */
 export async function logUserAction(
-  eventName: string,
+  event: string,
   params?: Record<string, string | number | boolean>,
 ): Promise<void> {
+  const analytics = await getAnalyticsInstance()
+  if (!analytics) return
   try {
-    const supported = await isSupported()
-    if (!supported) return
-    const analytics = getAnalytics(getFirebaseApp())
-    logEvent(analytics, eventName, params)
-  } catch (err) {
-    console.debug('[Firebase] Event log failed:', err)
+    logEvent(analytics, event, params)
+  } catch {
+    // Silently ignore
   }
 }
 
-// ─── Firestore: session logging ───────────────────────────────────
 /**
- * Logs a chat query to Firestore for anonymized analytics.
- * No personal data is stored — only topic categories and timestamps.
- *
- * @param topic - Detected topic category of the query (e.g. 'registration', 'booth')
- * @param language - Language used by the voter
- * @param isConfusionMode - Whether simple mode was active
+ * Logs an anonymized chat query topic to Firestore.
+ * @param topic - The detected topic (e.g. 'registration', 'booth')
+ * @param language - User language code ('en', 'hi', 'or')
+ * @param confusionMode - Whether user enabled simplified mode
  */
 export async function logChatQuery(
   topic: string,
   language: string,
-  isConfusionMode: boolean,
+  confusionMode: boolean,
 ): Promise<void> {
+  const db = await getDb()
+  if (!db) return
   try {
-    const firestore = getDb()
-    await addDoc(collection(firestore, 'chat_analytics'), {
+    await addDoc(collection(db, 'chat_queries'), {
       topic,
       language,
-      isConfusionMode,
+      confusionMode,
       timestamp: serverTimestamp(),
-      appVersion: '2.0',
+      // NOTE: No user ID, IP, or personal data is stored
     })
-  } catch (err) {
-    // Firestore may not be configured — fail silently
-    console.debug('[Firebase] Firestore write failed:', err)
+  } catch {
+    // Silently ignore — Firestore logging is non-critical
   }
 }
 
 /**
- * Logs a booth search event for geographic analytics.
- *
- * @param searchType - 'pincode' | 'location' | 'name'
+ * Logs an anonymized booth search to Firestore.
+ * @param state - The state the user searched booths in
  */
-export async function logBoothSearch(searchType: 'pincode' | 'location' | 'name'): Promise<void> {
+export async function logBoothSearch(state: string): Promise<void> {
+  const db = await getDb()
+  if (!db) return
   try {
-    const firestore = getDb()
-    await addDoc(collection(firestore, 'booth_searches'), {
-      searchType,
+    await addDoc(collection(db, 'booth_searches'), {
+      state,
       timestamp: serverTimestamp(),
-      appVersion: '2.0',
     })
-    await logUserAction('booth_search', { search_type: searchType })
-  } catch (err) {
-    console.debug('[Firebase] Booth search log failed:', err)
+  } catch {
+    // Silently ignore
   }
 }
-
-export { getDb, getFirebaseApp }
