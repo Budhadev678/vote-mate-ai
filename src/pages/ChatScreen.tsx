@@ -13,6 +13,7 @@ import { TypingIndicator } from '../components/TypingIndicator'
 import { KnowledgeCard, QUICK_CARDS } from '../components/KnowledgeCard'
 import type { ChatMessage, KnowledgeCard as KCard } from '../types'
 import ReactMarkdown from 'react-markdown'
+import DOMPurify from 'dompurify'
 import remarkGfm from 'remark-gfm'
 
 const QUICK_SUGGESTIONS = [
@@ -386,7 +387,7 @@ export function ChatScreen() {
                         ),
                       }}
                     >
-                      {msg.content}
+                      {DOMPurify.sanitize(msg.content)}
                     </ReactMarkdown>
                   ) : (
                     <p className="text-[13px] font-inter leading-relaxed">{msg.content}</p>
