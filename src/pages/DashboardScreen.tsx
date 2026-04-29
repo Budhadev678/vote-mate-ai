@@ -139,6 +139,7 @@ export function DashboardScreen() {
                 <button
                   key={item.screen}
                   onClick={() => navigate(item.screen)}
+                  aria-label={`Open ${item.label}`}
                   className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col items-center gap-2 hover:bg-slate-100 transition-colors active:scale-[0.98]"
                 >
                   <Icon className="w-5 h-5 text-slate-700" />
@@ -176,6 +177,7 @@ export function DashboardScreen() {
             setConfusionMode(true)
             navigate('chat')
           }}
+          aria-label="Need help? Ask AI"
           className="w-full py-4 rounded-xl bg-white border border-slate-300 flex items-center justify-center gap-2 text-slate-700 hover:bg-slate-50 transition-all active:scale-[0.98]"
         >
           <HelpCircle className="w-5 h-5 text-slate-500" />
@@ -188,6 +190,9 @@ export function DashboardScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
           onClick={() => navigate('crowd')}
+          role="button"
+          tabIndex={0}
+          aria-label="View crowd prediction"
           className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors active:scale-[0.98]"
         >
           <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
@@ -206,6 +211,9 @@ export function DashboardScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
           onClick={() => navigate('community')}
+          role="button"
+          tabIndex={0}
+          aria-label="View community progress"
           className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex items-center gap-4 cursor-pointer hover:bg-slate-50 transition-colors active:scale-[0.98]"
         >
           <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg flex-shrink-0">
@@ -258,6 +266,7 @@ export function DashboardScreen() {
                  store.alerts.forEach(a => store.dismissAlert(a.id));
                }}
                className="w-full mt-3 py-2 text-xs font-inter font-medium text-slate-500 hover:text-slate-900 transition-colors bg-slate-50 rounded-lg"
+               aria-label="Clear all notifications"
              >
                Clear All
              </button>

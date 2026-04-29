@@ -117,6 +117,7 @@ export function ProfileScreen() {
             {/* Edit badge */}
             <button
               onClick={() => { setNameInput(user.name || ''); setEditingName(true) }}
+              aria-label="Edit name"
               className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-md"
             >
               <Edit2 className="w-2.5 h-2.5 text-slate-700" />
@@ -138,12 +139,14 @@ export function ProfileScreen() {
                 />
                 <button
                   onClick={handleSaveName}
+                  aria-label="Save name"
                   className="w-8 h-8 rounded-xl bg-white flex items-center justify-center shadow-sm flex-shrink-0"
                 >
                   <Check className="w-4 h-4 text-indigo-600" />
                 </button>
                 <button
                   onClick={() => setEditingName(false)}
+                  aria-label="Cancel editing name"
                   className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0"
                 >
                   <X className="w-4 h-4 text-white/70" />
@@ -223,6 +226,7 @@ export function ProfileScreen() {
                   <button
                     key={lang}
                     onClick={() => updateUser({ language: lang })}
+                    aria-label={`Select language: ${lang}`}
                     className={`px-2.5 py-1.5 rounded-lg text-xs font-inter font-bold border transition-all ${
                       user.language === lang
                         ? 'text-white border-transparent'
@@ -251,6 +255,7 @@ export function ProfileScreen() {
                   <button
                     key={mode}
                     onClick={() => updateUser({ preferredMode: mode })}
+                    aria-label={`Select app mode: ${mode}`}
                     className={`px-2.5 py-1.5 rounded-lg text-xs font-inter font-bold border capitalize transition-all ${
                       user.preferredMode === mode
                         ? 'text-white border-transparent'
@@ -279,6 +284,7 @@ export function ProfileScreen() {
               </div>
               <button
                 onClick={() => { setStateSearch(''); setShowStateSheet(true) }}
+                aria-label={user.state ? 'Change state' : 'Set state'}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 text-xs font-inter font-bold hover:bg-slate-100 transition-colors"
               >
                 <Edit2 className="w-3 h-3" />
@@ -304,6 +310,7 @@ export function ProfileScreen() {
               <button
                 key={item.screen}
                 onClick={() => navigate(item.screen)}
+                aria-label={`Go to ${item.label}`}
                 className={`w-full flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left ${
                   i < group.items.length - 1 ? 'border-b border-slate-50' : ''
                 }`}
@@ -342,6 +349,7 @@ export function ProfileScreen() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`Visit official resource: ${link.label}`}
               className={`flex items-center gap-3 px-5 py-3.5 hover:bg-blue-100/50 transition-colors ${i < arr.length - 1 ? 'border-b border-blue-100' : ''}`}
             >
               <span className="text-lg">{link.icon}</span>
@@ -363,6 +371,7 @@ export function ProfileScreen() {
         >
           <button
             onClick={() => setShowResetConfirm(true)}
+            aria-label="Reset all progress and data"
             className="w-full py-3.5 rounded-2xl flex items-center justify-center gap-2 text-rose-600 border border-rose-100 bg-rose-50 hover:bg-rose-100 transition-colors font-inter text-sm font-bold"
           >
             <RotateCcw className="w-4 h-4" />

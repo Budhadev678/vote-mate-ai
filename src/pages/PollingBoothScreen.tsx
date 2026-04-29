@@ -95,6 +95,7 @@ export function PollingBoothScreen() {
               <button
                 onClick={handleFindBooth}
                 disabled={loading}
+                aria-label="Find polling booth by pincode"
                 className="px-5 py-3 rounded-xl text-white text-sm font-poppins font-semibold shadow-md disabled:opacity-60 active:scale-[0.97] transition-all flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg, #4F46E5, #2563eb)' }}
               >
@@ -112,6 +113,7 @@ export function PollingBoothScreen() {
             <button
               onClick={handleFindBooth}
               disabled={loading}
+              aria-label="Find polling booth using current location"
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-blue-200 text-blue-700 text-sm font-inter font-semibold transition-all hover:bg-blue-50 disabled:opacity-60"
               style={{ background: 'rgba(239, 246, 255, 0.7)' }}
             >
@@ -174,13 +176,17 @@ export function PollingBoothScreen() {
               <div className="flex gap-3">
                 <button
                   onClick={() => window.open('https://maps.google.com', '_blank')}
+                  aria-label="Navigate to booth via Google Maps"
                   className="flex-1 py-3.5 rounded-xl text-white text-sm font-poppins font-semibold flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-all"
                   style={{ background: 'linear-gradient(135deg, #4F46E5, #2563eb)' }}
                 >
                   <Navigation className="w-4 h-4" />
                   Navigate
                 </button>
-                <button className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 text-sm font-inter font-semibold hover:bg-slate-100 transition-colors">
+                <button 
+                  aria-label="Share booth location"
+                  className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 text-sm font-inter font-semibold hover:bg-slate-100 transition-colors"
+                >
                   <Share2 className="w-4 h-4" />
                   Share
                 </button>

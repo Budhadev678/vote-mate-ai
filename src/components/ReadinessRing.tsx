@@ -12,7 +12,7 @@ export function ReadinessRing({ score, size = 100, label }: Props) {
   const offset = circumference - (score / 100) * circumference
 
   const color =
-    score >= 75 ? '#22C55E' : score >= 50 ? '#F59E0B' : score >= 25 ? '#6366F1' : '#EF4444'
+    score >= 75 ? '#22C55E' : score >= 50 ? '#6366F1' : score >= 25 ? '#A855F7' : '#EF4444'
 
   const emoji = score >= 75 ? '✅' : score >= 50 ? '⚡' : score >= 25 ? '📝' : '❗'
 
