@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --blue-primary: #1E3A8A;
+    --green-action: #22C55E;
+    --red-alert: #EF4444;
+    --amber-warn: #F59E0B;
+    --success: #10B981;
+    --indigo: #6366F1;
+    --purple: #8B5CF6;
+    --teal: #14B8A6;
+    --bg-main: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --border: #E5E7EB;
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-main);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  p { margin: 0; }
+
+  #root {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  button { cursor: pointer; }
+  a { text-decoration: none; }
+}
+
+@layer components {
+  /* ─── Scrollbar ─────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+
+  /* ─── Typing dots animation ─────────────────────────────── */
+  .typing-dot {
+    @apply w-2 h-2 rounded-full bg-blue-400 inline-block;
+    animation: typingBounce 1.2s infinite ease-in-out;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+    40% { transform: scale(1.1); opacity: 1; }
+  }
+
+  /* ─── Pulse ring animation ──────────────────────────────── */
+  .pulse-ring {
+    animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulseRing {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.8; }
+  }
+
+  /* ─── Shimmer loading ───────────────────────────────────── */
+  .shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* ─── Voice waveform ────────────────────────────────────── */
+  .voice-bar {
+    @apply w-1 bg-blue-500 rounded-full;
+    animation: voiceWave 0.8s infinite ease-in-out alternate;
+  }
+  .voice-bar:nth-child(2) { animation-delay: 0.1s; }
+  .voice-bar:nth-child(3) { animation-delay: 0.2s; }
+  .voice-bar:nth-child(4) { animation-delay: 0.3s; }
+  .voice-bar:nth-child(5) { animation-delay: 0.2s; }
+  .voice-bar:nth-child(6) { animation-delay: 0.1s; }
+
+  @keyframes voiceWave {
+    from { height: 4px; opacity: 0.4; }
+    to { height: 24px; opacity: 1; }
+  }
+
+  /* ─── Glow card ─────────────────────────────────────────── */
+  .card-glow {
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.15), 0 4px 24px rgba(99, 102, 241, 0.08);
+  }
+
+  /* ─── Float animation ───────────────────────────────────── */
+  .float-up {
+    animation: floatUp 0.5s ease-out forwards;
+  }
+  @keyframes floatUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Progress bar gradient ─────────────────────────────── */
+  .progress-gradient {
+    background: linear-gradient(90deg, #1E3A8A 0%, #3B82F6 50%, #22C55E 100%);
+  }
+
+  /* ─── Radial progress ───────────────────────────────────── */
+  .radial-progress {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+
+  /* ─── AI bubble gradient ────────────────────────────────── */
+  .ai-bubble {
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+    border: 1px solid #BFDBFE;
+  }
+
+  .user-bubble {
+    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    border: 1px solid #BBF7D0;
+  }
+
+  /* ─── Urgency banner ────────────────────────────────────── */
+  .urgency-banner {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    animation: urgencyPulse 2s ease-in-out infinite;
+  }
+  @keyframes urgencyPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  }
+
+  /* ─── Step connector line ───────────────────────────────── */
+  .step-line {
+    position: absolute;
+    left: 19px;
+    top: 44px;
+    bottom: -8px;
+    width: 2px;
+    background: linear-gradient(180deg, #22C55E 0%, #E5E7EB 100%);
+  }
+
+  /* ─── Fade in animation ─────────────────────────────────── */
+  .fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ─── Slide up animation ────────────────────────────────── */
+  .slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── Status badge ──────────────────────────────────────── */
+  .badge-ready { @apply bg-green-100 text-green-700 border border-green-200; }
+  .badge-partial { @apply bg-amber-100 text-amber-700 border border-amber-200; }
+  .badge-notready { @apply bg-red-100 text-red-700 border border-red-200; }
+  .badge-pending { @apply bg-gray-100 text-gray-600 border border-gray-200; }
+
+  /* ─── Nav item active ───────────────────────────────────── */
+  .nav-active {
+    @apply text-blue-700 bg-blue-50;
+  }
+}
+
+@layer utilities {
+  .font-poppins { font-family: 'Poppins', sans-serif; }
+  .font-inter { font-family: 'Inter', sans-serif; }
+  .text-gradient {
+    background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #22C55E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .bg-mesh {
+    background-image: radial-gradient(at 40% 20%, #EFF6FF 0px, transparent 50%),
+      radial-gradient(at 80% 0%, #F0FDF4 0px, transparent 50%),
+      radial-gradient(at 0% 50%, #EEF2FF 0px, transparent 50%);
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 16px); }
+}
