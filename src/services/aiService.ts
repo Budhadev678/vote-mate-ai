@@ -126,8 +126,9 @@ async function offlineEngine(
   await new Promise((resolve) => setTimeout(resolve, 600))
 
   const lower = message.toLowerCase()
-  let content = ''
-  let nextAction = 'Ask another question'
+  // eslint-disable-next-line no-useless-assignment
+    let content = ''
+  let nextAction: string
 
   if (confusionMode) {
     if (lower.includes('register') || lower.includes('apply')) {

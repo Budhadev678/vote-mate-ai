@@ -7,9 +7,6 @@ import type {
   FamilyMember,
   Recommendation,
   AppAlert,
-  Language,
-  VoterType,
-  InteractionMode,
   StepId,
   AppContext,
 } from '../types'

@@ -152,7 +152,7 @@ describe('Readiness score computation', () => {
   })
 
   it('ignores unknown step names', () => {
-    user = updateUser(user, { stepsCompleted: ['unknown_step'] as any })
+    user = updateUser(user, { stepsCompleted: ['unknown_step'] as unknown })
     expect(computeReadiness(user)).toBe(0)
   })
 })

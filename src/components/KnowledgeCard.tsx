@@ -55,6 +55,7 @@ export function KnowledgeCard({ card }: { card: KCard }) {
 }
 
 // ─── Static quick-access cards used across the app ────────────────
+// eslint-disable-next-line react-refresh/only-export-components
 export const QUICK_CARDS: KCard[] = [
   {
     icon: '📄',

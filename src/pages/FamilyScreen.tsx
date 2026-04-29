@@ -61,7 +61,7 @@ export function FamilyScreen() {
         {familyMembers.length > 0 && (
           <div className="mt-6 flex items-center gap-3 bg-slate-50 px-4 py-3 rounded-2xl border border-slate-100">
             <div className="flex -space-x-2">
-              {familyMembers.slice(0, 3).map((m, i) => (
+              {familyMembers.slice(0, 3).map((m) => (
                 <div key={m.id} className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center text-xs shadow-sm">
                   {m.ageGroup === 'youth' ? '👦' : m.ageGroup === 'senior' ? '👴' : '👤'}
                 </div>

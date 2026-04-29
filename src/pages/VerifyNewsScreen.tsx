@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Shield, AlertTriangle, CheckCircle2, HelpCircle, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Shield, AlertTriangle, ExternalLink } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { verifyNews } from '../services/aiService'
-import type { NewsVerdict, NewsAnalysis } from '../types'
+import type { NewsAnalysis } from '../types'
 
 const VERDICT_CONFIG = {
   'likely-fake': {

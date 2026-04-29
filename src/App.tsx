@@ -123,6 +123,7 @@ function App() {
 
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ── Offline detection ──────────────────────────────────────────
@@ -229,6 +230,7 @@ function OfflineBanner() {
 
   // Reset dismissed state when coming back online
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!isOffline) setDismissed(false)
   }, [isOffline])
 

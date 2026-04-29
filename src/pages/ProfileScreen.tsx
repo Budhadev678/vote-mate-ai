@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft, MapPin, Globe, Settings2, ChevronRight,
-  BookOpen, Users, BarChart2, HelpCircle, RotateCcw,
-  Shield, Scale, AlertOctagon, Accessibility, Check,
-  ExternalLink, Phone, Edit2, X, ChevronDown,
+  RotateCcw, Check, ExternalLink, Edit2, X,
 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { ReadinessRing } from '../components/ReadinessRing'

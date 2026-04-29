@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Lock, Phone } from 'lucide-react'
+import { ArrowRight, } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
 export function AuthScreen() {
   const { login, navigate, user } = useStore()
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
-  const [phone, setPhone] = useState('')
+  const [phone, set] = useState('')
   const [otp, setOtp] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -69,7 +69,7 @@ export function AuthScreen() {
                       type="tel"
                       maxLength={10}
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                      onChange={(e) => set(e.target.value.replace(/\D/g, ''))}
                       placeholder="98765 43210"
                       className="flex-1 bg-transparent text-sm font-inter text-slate-800 placeholder-slate-400 focus:outline-none"
                     />

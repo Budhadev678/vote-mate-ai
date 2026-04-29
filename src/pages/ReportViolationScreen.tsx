@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Camera, MapPin, Send, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Camera, MapPin, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
 export function ReportViolationScreen() {

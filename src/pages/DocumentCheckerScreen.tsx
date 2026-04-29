@@ -37,7 +37,7 @@ export function DocumentCheckerScreen() {
   }
 
   const isReady = selected.size > 0
-  const readinessScore = selected.size > 0 ? Math.min(100, selected.size * 40) : 0
+
 
   return (
     <div className="flex-1 overflow-y-auto overflow-x-hidden bg-slate-50 pb-4">

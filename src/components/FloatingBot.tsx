@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bot, X, Info } from 'lucide-react'
+import { Bot, X, } from 'lucide-react'
 import { useStore } from '../store/useStore'
 
 export function FloatingBot() {
   const { navigate, showFloatingBot, currentScreen } = useStore()
-  const [showInfo, setShowInfo] = useState(false)
+  const [show, setShow] = useState(false)
 
   const hiddenScreens = ['landing', 'onboarding', 'chat', 'auth']
   if (!showFloatingBot || hiddenScreens.includes(currentScreen)) return null
@@ -13,9 +13,9 @@ export function FloatingBot() {
   return (
     /* Positioned inside the app container's right side, above the bottom nav (62px) */
     <div className="absolute bottom-[74px] right-3 z-40 flex flex-col items-end gap-2">
-      {/* Info tooltip popup */}
+      {/* tooltip popup */}
       <AnimatePresence>
-        {showInfo && (
+        {show && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -30,7 +30,7 @@ export function FloatingBot() {
                 <p className="font-poppins font-semibold text-[12px] text-white">AI Assistant</p>
               </div>
               <button
-                onClick={() => setShowInfo(false)}
+                onClick={() => setShow(false)}
                 className="text-slate-500 hover:text-slate-300 transition-colors"
               >
                 <X className="w-3.5 h-3.5" />
@@ -45,14 +45,13 @@ export function FloatingBot() {
 
       {/* Button row: info (i) + bot */}
       <div className="flex items-center gap-2">
-        {/* Info 'i' button */}
+        {/* 'i' button */}
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.93 }}
-          onClick={() => setShowInfo(!showInfo)}
+          onClick={() => setShow(!show)}
           className={`w-8 h-8 rounded-full shadow-md border flex items-center justify-center text-[12px] font-bold font-inter transition-all ${
-            showInfo
-              ? 'bg-slate-900 text-white border-slate-700'
+            show? 'bg-slate-900 text-white border-slate-700'
               : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
           }`}
         >

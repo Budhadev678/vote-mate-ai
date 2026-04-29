@@ -4,8 +4,7 @@ import { useStore } from '../store/useStore'
 import { ProgressBar } from '../components/ProgressBar'
 import { ReadinessRing } from '../components/ReadinessRing'
 import { AlertBanner } from '../components/AlertBanner'
-import { QUICK_CARDS } from '../components/KnowledgeCard'
-import { KnowledgeCard } from '../components/KnowledgeCard'
+import { KnowledgeCard, QUICK_CARDS } from '../components/KnowledgeCard'
 import { InfoButton } from '../components/InfoButton'
 
 const JOURNEY_STEPS = [
@@ -35,13 +34,7 @@ export function DashboardScreen() {
 
   const nextAction = getNextAction()
 
-  const nextActionColors: Record<string, string> = {
-    blue: 'from-blue-700 to-blue-500',
-    green: 'from-green-600 to-green-400',
-    amber: 'from-amber-600 to-amber-400',
-    red: 'from-red-600 to-red-500',
-  }
-
+  
   const voterLabel = user.voterType === 'first-time' ? 'First-Time Voter' : 'Voter'
 
   return (

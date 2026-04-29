@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useStore } from '../store/useStore'
-import type { VoterType, InteractionMode } from '../types'
+
 import { InfoButton } from '../components/InfoButton'
 
 // ─── Indian states list ───────────────────────────────────────────
@@ -39,7 +39,7 @@ const STEPS: OnboardingStep[] = [
 ]
 
 export function OnboardingScreen() {
-  const { onboardingStep, setOnboardingStep, updateUser, finishOnboarding, user } = useStore()
+  const { onboardingStep, setOnboardingStep, updateUser, finishOnboarding } = useStore()
   const [selections, setSelections] = useState<Record<string, string>>({})
   const [stateInput, setStateInput] = useState('')
   const [filteredStates, setFilteredStates] = useState<string[]>([])
@@ -313,30 +313,3 @@ export function OnboardingScreen() {
   )
 }
 
-function ChoiceButton({
-  label,
-  selected,
-  onClick,
-  color,
-}: {
-  label: string
-  selected: boolean
-  onClick: () => void
-  color: string
-}) {
-  return (
-    <motion.button
-      onClick={onClick}
-      whileTap={{ scale: 0.95 }}
-      className={`flex-1 py-3 px-3 rounded-2xl border-2 text-sm font-poppins font-semibold transition-all ${
-        selected
-          ? color === 'blue'
-            ? 'bg-blue-600 border-blue-600 text-white shadow-lg'
-            : 'bg-green-500 border-green-500 text-white shadow-lg'
-          : 'bg-white border-gray-200 text-gray-700 hover:border-blue-300'
-      }`}
-    >
-      {label}
-    </motion.button>
-  )
-}

@@ -8,7 +8,7 @@ interface InfoButtonProps {
   position?: 'default' | 'left'
 }
 
-export function InfoButton({ text, title = 'Information', position = 'default' }: InfoButtonProps) {
+export function InfoButton({ text, title = 'Information' }: InfoButtonProps) {
   const [show, setShow] = useState(false)
 
   return (

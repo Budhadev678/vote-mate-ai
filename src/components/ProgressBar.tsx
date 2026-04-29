@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { CheckCircle2, Circle, Lock } from 'lucide-react'
+import { Check2, } from 'lucide-react'
 
 interface Props {
   steps: { id: string; label: string }[]
@@ -7,7 +7,6 @@ interface Props {
   completed: string[]
 }
 
-const STEP_COLORS = ['#0f172a', '#0f172a', '#0f172a', '#0f172a']
 
 export function ProgressBar({ steps, current, completed }: Props) {
   return (
@@ -29,7 +28,7 @@ export function ProgressBar({ steps, current, completed }: Props) {
         {steps.map((step, i) => {
           const isDone = completed.includes(step.id)
           const isCurrent = step.id === current && !isDone
-          const isLocked = !isDone && !isCurrent
+
 
           return (
             <div key={step.id} className="flex flex-col items-center gap-1.5 z-20">
@@ -46,7 +45,7 @@ export function ProgressBar({ steps, current, completed }: Props) {
                 }`}
               >
                 {isDone ? (
-                  <CheckCircle2 className="w-5 h-5" />
+                  <Check2 className="w-5 h-5" />
                 ) : isCurrent ? (
                   <div className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse" />
                 ) : (

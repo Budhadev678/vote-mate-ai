@@ -71,7 +71,7 @@ describe('Crowd hours data', () => {
   })
 
   it('has exactly one worst slot', () => {
-    const worstSlots = CROWD_HOURS.filter((s: any) => s.worst)
+    const worstSlots = CROWD_HOURS.filter((s: unknown) => s.worst)
     expect(worstSlots).toHaveLength(1)
   })
 

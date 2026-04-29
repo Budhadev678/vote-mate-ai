@@ -5,7 +5,7 @@
  * chat message handling, family member management, and alert lifecycle.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { sanitizeInput } from '../utils/sanitize'
 import { getFallbackResponse, getGreetingMessage } from '../services/aiService'
 import {

@@ -4,6 +4,7 @@ import { ArrowLeft, Search, X, ChevronRight, BookOpen } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { glossary } from '../data/glossary'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TAG_COLORS = {
   process: 'bg-slate-100 text-slate-700',
   legal: 'bg-slate-100 text-slate-700',
